@@ -101,7 +101,7 @@ def execution_time_resolution(rows=20, columns=20, tries=100,
     print("-----CALCOLO ALGORITMI RISOLUTIVI-----")
 
     if maze_solvers is None:
-        maze_solvers = [AStar] #WallFollower, Tremaux
+        maze_solvers = [AStar]
 
     performance_metrics = {}
 

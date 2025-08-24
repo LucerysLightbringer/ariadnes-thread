@@ -10,8 +10,6 @@ from grid import Grid
 from binary_tree import BinaryTree
 from sidewinder import Sidewinder
 from aldous_broder import AldousBroder
-from wall_follower import WallFollower
-from tremaux import Tremaux
 from recursive_backtracker import RecursiveBacktracker
 
 
