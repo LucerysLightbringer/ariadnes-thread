@@ -115,8 +115,8 @@ def execution_time_resolution(rows=20, columns=20, tries=100,
 
             testgrid = Grid(rows, columns)
             maze_generator.apply(testgrid)
-            start_cell = testgrid[0, 0]
-            end_cell = testgrid[rows - 1, columns - 1]
+            start_cell = testgrid.random_cell()
+            end_cell = testgrid.random_cell()
 
             solve_start_time = time.perf_counter()
             solution_path = algo.apply(testgrid, start_cell, end_cell)
@@ -159,7 +159,7 @@ def execution_time_resolution(rows=20, columns=20, tries=100,
             print(f"{algo.__name__}: Nessun dato disponibile o tutti i tentativi sono falliti.")
         else:
             metric_time = metrics["average_time"]
-            metric_path = metrics["average_path_length"]
+            metric_path = metrics["average_length"]
             print(f"{algo.__name__}: \n\t"
                   f"[ {metric_time / 60:.3f}m | {metric_time:.3f}s | {(metric_time * 1000):.3f}ms ] \n\t"
                   f"Lunghezza media percorso: {metric_path} \n")
@@ -274,9 +274,9 @@ def write_on_file(filepath, rows=100, cols=100, tries=100, show_every_try=False)
 
 if __name__ == "__main__":
 
-    rows = 100
-    columns = 100
-    tries = 500
+    rows = 500
+    columns = 500
+    tries = 100
 
 
     #count_deadends(rows, columns, tries)
@@ -286,10 +286,10 @@ if __name__ == "__main__":
     #gen = [RecursiveBacktracker]
     #execution_time_generation(rows, columns, tries, gen, show_every_try=True)
 
-
-    #execution_time_resolution(rows, columns, tries, maze_generator=BinaryTree, show_every_try=True)
-    #execution_time_resolution(rows, columns, tries, maze_generator=Sidewinder, show_every_try=True)
-    #execution_time_resolution(rows, columns, tries, maze_generator=RecursiveBacktracker, show_every_try=True)
     #execution_time_resolution(rows, columns, tries, maze_generator=AldousBroder, show_every_try=True)
+    execution_time_resolution(rows, columns, tries, maze_generator=BinaryTree, show_every_try=True)
+    execution_time_resolution(rows, columns, tries, maze_generator=Sidewinder, show_every_try=True)
+    execution_time_resolution(rows, columns, tries, maze_generator=RecursiveBacktracker, show_every_try=True)
+
 
     #write_on_file("analysis_results.txt", rows, columns, tries, show_every_try=False)
