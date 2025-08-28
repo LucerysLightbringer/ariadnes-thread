@@ -40,7 +40,20 @@ class Grid:
     # di (row,column) come un array 2D di celle (quindi una matrice).
     # Ritorno quindi la matrice.
     def _create_grid(self):
-        return [[Cell(row, col) for col in range(self.columns)] for row in range(self.rows)]
+
+        grid = []
+
+        for row in range(self.rows):
+
+            row_list = []
+
+            for col in range(self.columns):
+                cell = Cell(row, col)
+                row_list.append(cell)
+
+            grid.append(row_list)
+
+        return grid
     # ----------------------------------------------- #
 
 
@@ -123,61 +136,10 @@ class Grid:
 
             # Controlla se la cella ha esattamente una sola cella collegata
             # ovvero è un vicolo cieco
-            if len(cell.links()) == 1:
+            if len(cell.links_as_dict()) == 1:
                 deadends.append(cell)
 
         return deadends
-    # ----------------------------------------------- #
-
-
-
-    # Metodo util per decidere cosa stampare all'interno di una cella.
-    # in una visualizzazione su console.
-    # Default = singolo spazio vuoto.
-    def contents_of(self,cell):
-        return " "
-    # ----------------------------------------------- #
-
-
-
-    # Rappresento la griglia in formato leggibile come stringa ASCII.
-    def __str__(self):
-
-        # Output è la stringa che contiene la rappresentazione della griglia
-        #output = "+" + ("---+" * self.columns) + "\n"
-        output = "+" + ("---+" * self.columns) + "\n"
-
-        for row in self.each_row():
-
-            north_edge = "|"  # muro nord della riga corrente
-            south_edge = "+"  # muro sud della riga corrente
-
-            for cell in row:
-
-                if cell is None:  # possibili vuoti nella riga
-                    cell = Cell(-1, -1)  # cella falsa
-
-                # innercontent = "   "  # tre spazi
-                innercontent = f" {self.contents_of(cell)} "
-
-                if cell.is_linked(cell.east):
-                    east_bound = " "
-                else:
-                    east_bound = "|"
-
-                north_edge += innercontent + east_bound
-
-                if cell.is_linked(cell.south):
-                    south_bound = "   "
-                else:
-                    south_bound = "---"
-
-                south_edge += south_bound + "+"
-
-            output += north_edge + "\n"
-            output += south_edge + "\n"
-
-        return output
     # ----------------------------------------------- #
 
 
@@ -355,7 +317,7 @@ class Grid:
 
             current_dist = path_distances_obj[cell]
             next_cell_in_path = None
-            for neighbor in cell.all_links():
+            for neighbor in cell.links_as_list():
                 if path_distances_obj[neighbor] == current_dist - 1:
                     next_cell_in_path = neighbor
                     break
