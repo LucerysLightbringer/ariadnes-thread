@@ -62,7 +62,7 @@ class AStar:
 
 
             # Osservo tutte le celle collegate a quella attuale
-            for neighbor in current_cell.all_links():
+            for neighbor in current_cell.links_as_list():
 
                 # Il costo per raggiungere la cella adiacente attraverso la cella corrente.
                 # Nel nostro caso (labirinto ortogonale), costo unitario.
