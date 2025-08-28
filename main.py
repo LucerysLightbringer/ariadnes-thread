@@ -16,8 +16,8 @@ def main():
 
 
     # ----------------------------------------------- #
-    maze_row = 200
-    maze_col = 200
+    maze_row = 50
+    maze_col = 50
     MazeGrid = Grid(maze_row,maze_col)
 
     start_time = time.perf_counter()
@@ -26,7 +26,7 @@ def main():
 
 
     # Griglia per calcoli delle distanze e visualizzazione PNG
-    GridVisualize = ColoredGrid(maze_row, maze_col)
+    GridVisualize = Grid(maze_row, maze_col)
     copy_maze_structure(MazeGrid, GridVisualize)
 
 
@@ -83,32 +83,6 @@ def main():
 
 
     # ----------------------------------------------- #
-    # Calcolo lo shortest path
-    shortest_path_goal = goal_cell
-
-    shortest_path_distances = None  # Inizializza a None per sicurezza
-
-    if root and shortest_path_goal:
-
-        start_time = time.perf_counter()
-
-        distances_from_shortest_path_root = root.distances()
-        shortest_path_distances = distances_from_shortest_path_root.shortest_path_to(shortest_path_goal)
-
-        end_time = time.perf_counter()
-        execution_time = end_time - start_time
-
-        if execution_time >= 60:
-            print(f"Calcolo del percorso più corto da {root} a {shortest_path_goal} : {shortest_path_distances[shortest_path_goal]} in: [ {(execution_time/60):.3f}s | {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
-        else:
-            print(f"Calcolo del percorso più corto da {root} a {shortest_path_goal} : {shortest_path_distances[shortest_path_goal]} in: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
-    else:
-        print("Errore: Le celle di root/goal per lo shortest path non sono valide.\n")
-    # ----------------------------------------------- #
-
-
-
-    # ----------------------------------------------- #
     # Un valore di 2 o 3 pixel è spesso sufficiente per cell_size=20
     #cell_inset = 6
     #cell_size = 22
@@ -118,11 +92,11 @@ def main():
     # MazeGrid, grid_distances e grid_colored non cambiano nulla se non applico le distanze
     # grid_xxx.distances = maze_distances
 
-    img_maze_checkerboard = MazeGrid.to_png(cell_size=cell_size, inset=cell_inset, background_type="checkerboard")
+    img_maze_checkerboard = MazeGrid.to_png(cell_size=cell_size, background_type="checkerboard")
     img_maze_checkerboard.save("maze_checkerboard.png")
     img_maze_checkerboard.show()
 
-    img_maze_all_white = MazeGrid.to_png(cell_size=cell_size, inset=cell_inset, background_type="plain-white")
+    img_maze_all_white = MazeGrid.to_png(cell_size=cell_size, background_type="plain-white")
     img_maze_all_white.save("maze_all_white.png")
     img_maze_all_white.show()
     # ----------------------------------------------- #
@@ -141,26 +115,22 @@ def main():
     # ----------------------------------------------- #
 
 
-
-    # ---------------------------------------------------------- #
     # Distanze base (colorata, senza distanze)
-    img_distances_colored_only = GridVisualize.to_png(cell_size,inset=cell_inset,background_type="checkerboard")
-    img_distances_colored_only.save("maze_distances_color.png")
-    img_distances_colored_only.show()
+    img_distances_color = GridVisualize.to_png(cell_size, background_type="plain_white", show_distances=False)
+    img_distances_color.save("maze_distances_color.png")
+    img_distances_color.show()
     # ----------------------------------------------- #
 
 
-
-    # ---------------------------------------------------------- #
     # Distanze base (colorata con distanze)
-    img_distances_colored_with_numbers = GridVisualize.to_png_distances(maze_distances, cell_size, inset=cell_inset, background_type="checkerboard")
-    img_distances_colored_with_numbers.save("maze_distances_color_distance.png")
-    img_distances_colored_with_numbers.show()
+    img_distances_distance = GridVisualize.to_png(cell_size, background_type="plain_white",
+                                                              show_distances=True, distances_obj=maze_distances)
+    img_distances_distance.save("maze_distances_distance.png")
+    img_distances_distance.show()
     # ----------------------------------------------- #
 
 
 
-    # ---------------------------------------------------------- #
     # Risoluzione con A*
     #root = GridVisualize[0, 0]
     #goal_cell = GridVisualize[maze_row - 1, maze_col - 1]
@@ -171,7 +141,9 @@ def main():
     else:
         print("Nessun percorso trovato.")
 
-    img_solution_path_astar = GridVisualize.to_png_solution_path(cell_size, cell_inset, solution_path, root, goal_cell)
+    img_solution_path_astar = GridVisualize.to_png(cell_size, background_type="plain_white",
+                                                   show_solution=True, solution_path=solution_path,
+                                                   start_cell = root, end_cell = goal_cell)
     img_solution_path_astar.save("maze_solution_path_astar.png")
     img_solution_path_astar.show()
     # ----------------------------------------------- #
@@ -181,30 +153,27 @@ def main():
     # ---------------------------------------------------------- #
     # Percorso più lungo (colorato senza distanze)
     GridVisualize.distances = longest_path_distances
-    img_longest_path_colored_only = GridVisualize.to_png(cell_size, inset=cell_inset)
-    img_longest_path_colored_only.save("maze_longest_path_color.png")
-    img_longest_path_colored_only.show()
+    img_longest_path_default = GridVisualize.to_png(cell_size, background_type="plain_white", show_distances=False)
+    img_longest_path_default.save("maze_longest_path_color.png")
+    img_longest_path_default.show()
+
 
     # Percorso più lungo (colorato con distanze)
-    img_longest_path_colored_with_numbers = GridVisualize.to_png_distances(longest_path_distances, cell_size, inset=cell_inset)
-    img_longest_path_colored_with_numbers.save("maze_longest_path_color_distance.png")
-    img_longest_path_colored_with_numbers.show()
+    img_longest_path_distances = GridVisualize.to_png(cell_size, background_type="plain_white",
+                                                                 show_distances=True, distances_obj=longest_path_distances)
+    img_longest_path_distances.save("maze_longest_path_distance.png")
+    img_longest_path_distances.show()
+
+
+    longest_path = AStar.apply(MazeGrid, longest_path_root, longest_path_goal)
+    # Percorso più lungo (colorato con percorso)
+    img_longest_path_solution = GridVisualize.to_png(cell_size, background_type="plain_white",
+                                                                 show_distances=False,
+                                                                 show_solution=True, solution_path=longest_path,
+                                                                 start_cell = longest_path_root, end_cell = longest_path_goal)
+    img_longest_path_solution.save("maze_longest_path_solution.png")
+    img_longest_path_solution.show()
     # ---------------------------------------------------------- #
-
-
-
-    # ---------------------------------------------------------- #
-    # Percorso più breve tra root e goal (colorato senza distanze)
-    GridVisualize.distances = shortest_path_distances
-    img_shortest_path_colored_only = GridVisualize.to_png(cell_size, inset=cell_inset)
-    img_shortest_path_colored_only.save("maze_shortest_path_color.png")
-    img_shortest_path_colored_only.show()
-
-    # Percorso più breve tra root e goal (colorato con distanze)
-    img_shortest_path_colored_only = GridVisualize.to_png_distances(shortest_path_distances, cell_size, inset=cell_inset)
-    img_shortest_path_colored_only.save("maze_shortest_path_distance.png")
-    img_shortest_path_colored_only.show()
-    # ----------------------------------------------- #
 
 
 

@@ -32,6 +32,9 @@ class Grid:
 
         # Setto gli adiacenti di ogni cella
         self._configure_cells()
+
+        self._distances = None      # distanze
+        self._maxdistance = 0       # distanza massima
     # ----------------------------------------------- #
 
 
@@ -71,6 +74,27 @@ class Grid:
             cell.east  = self[row, col + 1]
     # ----------------------------------------------- #
 
+
+    # Setter per la proprietà 'distances'.
+    @property
+    def distances(self):
+        return self._distances
+    # ----------------------------------------------- #
+
+
+    # Si aspetta un oggetto Distances
+    @distances.setter
+    def distances(self, distances_obj: Distances):
+
+        self._distances = distances_obj
+
+        # Trova la cella più lontana e la sua distanza massima tramite longest_path_to(),
+        # ritorna la cella e la sua distanza.
+        if distances_obj:
+            farthest_cell, self._maxdistance = distances_obj.longest_path_to()
+        else:
+            self._maxdistance = 0
+    # ----------------------------------------------- #
 
 
     # Definisco la sintassi [i][j] per poter ottenere una singola cella.
@@ -143,23 +167,20 @@ class Grid:
     # ----------------------------------------------- #
 
 
-
-    # Colore di sfondo di una cella, sovrascritto in ColoredGrid
-    def grid_background_color(self, cell):
-        return None  # di default non vengono colorate
-    # ----------------------------------------------- #
-
-
-
-    # Disegna il labirinto base
-    def _draw_base_maze_image(self, cell_size=10, background_type="plain_white"):
+    # Stampa il labirinto
+    def to_png(self,
+               cell_size=10,
+               background_type="plain_white",
+               show_distances=False, distances_obj=None,
+               show_solution=False, solution_path=None,
+               start_cell=None, end_cell=None):
 
         img_width = cell_size * self.columns
         img_height = cell_size * self.rows
         img = Image.new("RGB", (img_width + 1, img_height + 1), "white")
         draw = ImageDraw.Draw(img)
 
-
+        # Itero ogni cella e calcolo colore
         for cell in self.each_cell():
 
             x1 = cell.column * cell_size
@@ -167,154 +188,110 @@ class Grid:
             x2 = (cell.column + 1) * cell_size
             y2 = (cell.row + 1) * cell_size
 
-            # Se scelgo come tipo di colore di background scacchiera, alterno
-            # celle bianche e nere
-            if background_type == "checkerboard":
-                if (cell.row + cell.column) % 2 == 0:
-                    background_color = (255, 255, 255)  # bianco
-                else:
-                    background_color = (220, 220, 220)  # grigio
+            # Scegli colore della cella
+            cell_color = None
 
-                draw.rectangle([x1, y1, x2, y2], fill=background_color)
+            # Calcola colore della cella in base alla distanza
+            if self.distances:
 
-            # Se scelgo come tipo di colore di background bianco,
-            # non faccio nulla perché l'immagine viene generata bianca di default
+                distance = self.distances[cell]
 
-        return img
-    # ----------------------------------------------- #
+                if distance is not None and self._maxdistance > 0:
+
+                    intensity = (self._maxdistance - distance) / self._maxdistance
+                    smooth_exp = 0.5
+                    interpolation = max(0.0, min(1.0, intensity ** smooth_exp))
+
+                    color_start = (25, 220, 25)
+                    color_end = (0, 50, 0)
+
+                    red = int(color_end[0] + (color_start[0] - color_end[0]) * interpolation)
+                    green = int(color_end[1] + (color_start[1] - color_end[1]) * interpolation)
+                    blue = int(color_end[2] + (color_start[2] - color_end[2]) * interpolation)
+
+                    cell_color = (red, green, blue)
 
 
+            # Se non calcolo il colore in base alle distanza,
+            # mi riduco a due opzioni
+            if not cell_color:
 
-    #
-    def to_png(self,
-               cell_size=10, inset=0,
-               background_type="plain_white", full_space_color=True,
-               thin_wall_color=(0, 0, 0, 50), thin_wall_width=1):
+                if background_type == "checkerboard":
+                    if (cell.row + cell.column) % 2 == 0:
+                        cell_color = (255, 255, 255)
+                    else:
+                        cell_color = (220, 220, 220)
+                elif background_type == "plain_white":
+                    cell_color = (255, 255, 255)
 
-        img = self._draw_base_maze_image(cell_size, background_type)
-        draw = ImageDraw.Draw(img)
 
-        # Disegna i colori di sfondo specifici delle celle (es. da ColoredGrid)
+            # Coloro effettivamente la cella
+            if cell_color:
+                draw.rectangle([x1, y1, x2, y2], fill=cell_color)
+
+
+            # Disegna le mura sottili per ogni griglia
+            thin_wall_color = (50, 50, 50)
+            thin_wall_width = 1
+            draw.line([(x1, y1), (x2, y1)], fill=thin_wall_color, width=thin_wall_width)
+            draw.line([(x1, y1), (x1, y2)], fill=thin_wall_color, width=thin_wall_width)
+            draw.line([(x2, y1), (x2, y2)], fill=thin_wall_color, width=thin_wall_width)
+            draw.line([(x1, y2), (x2, y2)], fill=thin_wall_color, width=thin_wall_width)
+
+
+            # Disegna i numeri delle distanze (se richiesto)
+            if show_distances and distances_obj and distances_obj[cell] is not None:
+
+                try:
+                    font_normal = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=9)
+                    font_small = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=8)
+                    current_font = font_normal
+                except IOError:
+                    font_default = ImageFont.load_default()
+                    current_font = font_default
+
+                text_color = (240, 50, 255) # viola
+                x = cell.column * cell_size + cell_size // 4
+                y = cell.row * cell_size + cell_size // 4
+
+                if distances_obj[cell] >= 1000:
+                    current_font = font_small
+
+                draw.text((x, y), str(distances_obj[cell]), fill=text_color, font=current_font)
+
+
+        # Disegna le mura spesse del labirinto sopra la griglia
+        thick_wall_width = 3
+        thick_wall_color = (0, 0, 0) # nero
+
         for cell in self.each_cell():
-
-            back_color = self.grid_background_color(cell)
-
-            if back_color:
-
-                x1 = cell.column * cell_size
-                y1 = cell.row * cell_size
-                x2 = (cell.column + 1) * cell_size
-                y2 = (cell.row + 1) * cell_size
-
-                # Riempi l'intera cella con il colore specificato
-                if full_space_color:
-
-                    draw.rectangle([x1, y1, x2, y2], fill=back_color)
-
-                    # Disegna bordi sottili sopra la cella colorata
-                    draw.line([(x1, y1), (x2, y1)], fill=thin_wall_color, width=thin_wall_width)  # Nord
-                    draw.line([(x1, y1), (x1, y2)], fill=thin_wall_color, width=thin_wall_width)  # Ovest
-                    draw.line([(x2, y1), (x2, y2)], fill=thin_wall_color, width=thin_wall_width)  # Est
-                    draw.line([(x1, y2), (x2, y2)], fill=thin_wall_color, width=thin_wall_width)  # Sud
-
-                # Applica l'inset per colorare solo una porzione della cella
-                else:
-
-                    effective_inset = min(inset, cell_size // 2 - 1)
-                    colored_x1 = x1 + effective_inset
-                    colored_y1 = y1 + effective_inset
-                    colored_x2 = x2 - effective_inset
-                    colored_y2 = y2 - effective_inset
-
-                    if colored_x2 > colored_x1 and colored_y2 > colored_y1:
-                        draw.rectangle([colored_x1, colored_y1, colored_x2, colored_y2], fill=back_color)
-
-        # Disegna le pareti spesse del labirinto
-        wall_width = 3
-        wall_color = (0, 0, 0) # Nero per i muri principali
-
-        for cell in self.each_cell():
-
             x1 = cell.column * cell_size
             y1 = cell.row * cell_size
             x2 = (cell.column + 1) * cell_size
             y2 = (cell.row + 1) * cell_size
 
             if not cell.north:
-                draw.line([(x1, y1), (x2, y1)], width=wall_width, fill=wall_color)
+                draw.line([(x1, y1), (x2, y1)], width=thick_wall_width, fill=thick_wall_color)
             if not cell.west:
-                draw.line([(x1, y1), (x1, y2)], width=wall_width, fill=wall_color)
+                draw.line([(x1, y1), (x1, y2)], width=thick_wall_width, fill=thick_wall_color)
             if not cell.is_linked(cell.east):
-                draw.line([(x2, y1), (x2, y2)], width=wall_width, fill=wall_color)
+                draw.line([(x2, y1), (x2, y2)], width=thick_wall_width, fill=thick_wall_color)
             if not cell.is_linked(cell.south):
-                draw.line([(x1, y2), (x2, y2)], width=wall_width, fill=wall_color)
-
-        return img
-    # ----------------------------------------------- #
+                draw.line([(x1, y2), (x2, y2)], width=thick_wall_width, fill=thick_wall_color)
 
 
+        # Disegna il percorso della soluzione (se richiesto)
+        if show_solution and solution_path:
 
-    # Crea una immagine PNG della griglia con i numeri delle distanze.
-    def to_png_distances(self, distances_obj: Distances,
-                         cell_size=10, inset=0,
-                         background_type="plain_white"):
+            if start_cell is None:
+                start_cell = solution_path[0]
 
-        img = self.to_png(cell_size=cell_size, inset=inset, background_type=background_type)
-        draw = ImageDraw.Draw(img)
+            if end_cell is None:
+                end_cell = solution_path[-1]
 
-        # Carica il font desiderato, oppure seleziona quello di default
-        try:
-            font_normal = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=9)
-            font_small = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=8)
-            current_font = font_normal
-        except IOError:
-            font_default = ImageFont.load_default()
-            current_font = font_default
-
-        text_color = (240, 50, 255) # viola
-
-        for cell in distances_obj.all_cells: # Usa all_cells dal Distances object
-
-            dist = distances_obj[cell]
-
-            if dist is not None:
-
-                # Centra il testo nella cella
-                x = cell.column * cell_size + cell_size // 4
-                y = cell.row * cell_size + cell_size // 4
-
-                if dist >= 1000:
-                    current_font = font_small
-
-                draw.text((x, y), str(dist), fill=text_color, font=current_font)
-
-        return img
-    # ----------------------------------------------- #
-
-
-
-    # Crea una immagine PNG della griglia con il percorso risolutivo.
-    def to_png_solution_path(self,
-                             cell_size=10, inset=0,
-                             solution_path=None, start_cell=None, end_cell=None,
-                             background_type="plain_white"):
-
-        img = self.to_png(cell_size=cell_size, inset=inset, background_type=background_type)
-        draw = ImageDraw.Draw(img)
-
-
-        if start_cell is None:
-            start_cell = self._grid[0][0]
-
-        if end_cell is None:
-            end_cell = self._grid[self.rows-1][self.columns-1]
-
-        path_color = (255, 255, 255) # bianco per il percorso
-        start_color = (255, 200, 0)  # giallo per la radice
-        end_color = (0, 255, 255)    # ciano per la cella obiettivo
-
-        # Disegna il percorso della soluzione se fornito
-        if solution_path:
+            path_color = (255, 255, 255)
+            start_color = (255, 200, 0)
+            end_color = (0, 255, 255)
 
             for i in range(len(solution_path) - 1):
 
@@ -329,21 +306,34 @@ class Grid:
                 draw.line((cx1, cy1, cx2, cy2), fill=path_color, width=max(1, cell_size // 10))
 
 
-        # Colora le celle di inizio e fine
-        if start_cell:
-            sx1 = start_cell.column * cell_size
-            sy1 = start_cell.row * cell_size
-            sx2 = (start_cell.column + 1) * cell_size
-            sy2 = (start_cell.row + 1) * cell_size
-            draw.rectangle((sx1 + 1, sy1 + 1, sx2 - 1, sy2 - 1), fill=start_color)
+            try:
+                font_normal = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=15)
+                current_font = font_normal
+            except IOError:
+                font_default = ImageFont.load_default()
+                current_font = font_default
 
-        if end_cell:
-            ex1 = end_cell.column * cell_size
-            ey1 = end_cell.row * cell_size
-            ex2 = (end_cell.column + 1) * cell_size
-            ey2 = (end_cell.row + 1) * cell_size
-            draw.rectangle((ex1 + 1, ey1 + 1, ex2 - 1, ey2 - 1), fill=end_color)
+            text_color = (240, 50, 255) # viola
 
+            if start_cell:
+                sx1 = start_cell.column * cell_size
+                sy1 = start_cell.row * cell_size
+                sx2 = (start_cell.column + 1) * cell_size
+                sy2 = (start_cell.row + 1) * cell_size
+                draw.rectangle((sx1 + 1, sy1 + 1, sx2 - 1, sy2 - 1), fill=start_color)
+                text_x = start_cell.column * cell_size + cell_size // 5
+                text_y = start_cell.row * cell_size + cell_size // 5
+                draw.text((text_x, text_y), "S", fill=text_color, font=current_font)
+
+            if end_cell:
+                ex1 = end_cell.column * cell_size
+                ey1 = end_cell.row * cell_size
+                ex2 = (end_cell.column + 1) * cell_size
+                ey2 = (end_cell.row + 1) * cell_size
+                draw.rectangle((ex1 + 1, ey1 + 1, ex2 - 1, ey2 - 1), fill=end_color)
+                text_x = end_cell.column * cell_size + cell_size // 5
+                text_y = end_cell.row * cell_size + cell_size // 5
+                draw.text((text_x, text_y), "E", fill=text_color, font=current_font)
 
         return img
-    # ----------------------------------------------- #
+        # ------------------------------------------------------------------------------------- #
