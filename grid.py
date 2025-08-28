@@ -144,7 +144,7 @@ class Grid:
 
 
 
-    # Colore di sfondo di una cella
+    # Colore di sfondo di una cella, sovrascritto in ColoredGrid
     def grid_background_color(self, cell):
         return None  # di default non vengono colorate
     # ----------------------------------------------- #
@@ -197,9 +197,9 @@ class Grid:
         # Disegna i colori di sfondo specifici delle celle (es. da ColoredGrid)
         for cell in self.each_cell():
 
-            foreground_color = self.grid_background_color(cell) # grid_background_color() sovrascritto in ColoredGrid
+            back_color = self.grid_background_color(cell)
 
-            if foreground_color:
+            if back_color:
 
                 x1 = cell.column * cell_size
                 y1 = cell.row * cell_size
@@ -209,7 +209,7 @@ class Grid:
                 # Riempi l'intera cella con il colore specificato
                 if full_space_color:
 
-                    draw.rectangle([x1, y1, x2, y2], fill=foreground_color)
+                    draw.rectangle([x1, y1, x2, y2], fill=back_color)
 
                     # Disegna bordi sottili sopra la cella colorata
                     draw.line([(x1, y1), (x2, y1)], fill=thin_wall_color, width=thin_wall_width)  # Nord
@@ -227,7 +227,7 @@ class Grid:
                     colored_y2 = y2 - effective_inset
 
                     if colored_x2 > colored_x1 and colored_y2 > colored_y1:
-                        draw.rectangle([colored_x1, colored_y1, colored_x2, colored_y2], fill=foreground_color)
+                        draw.rectangle([colored_x1, colored_y1, colored_x2, colored_y2], fill=back_color)
 
         # Disegna le pareti spesse del labirinto
         wall_width = 3
@@ -250,13 +250,6 @@ class Grid:
                 draw.line([(x1, y2), (x2, y2)], width=wall_width, fill=wall_color)
 
         return img
-    # ----------------------------------------------- #
-
-
-
-    # Colorazione di default in Grid, sovrascritto in ColoredGrid
-    def grid_background_color(self, cell):
-        return None
     # ----------------------------------------------- #
 
 
@@ -299,62 +292,6 @@ class Grid:
     # ----------------------------------------------- #
 
 
-    # Crea una immagine PNG della griglia con le frecce.
-    def to_pgn_arrows(self, path_distances_obj: Distances,
-                      cell_size=10, inset=0,
-                      background_type="plain_white"):
-
-        img = self.to_png(cell_size=cell_size, inset=inset, background_type=background_type)
-        draw = ImageDraw.Draw(img)
-
-        path_color = (255, 200, 0)  # giallo scuro
-        arrow_size_factor = 0.25
-
-        for cell in path_distances_obj.all_cells:
-
-            if cell == path_distances_obj.root:
-                continue
-
-            current_dist = path_distances_obj[cell]
-            next_cell_in_path = None
-            for neighbor in cell.links_as_list():
-                if path_distances_obj[neighbor] == current_dist - 1:
-                    next_cell_in_path = neighbor
-                    break
-
-            if next_cell_in_path:
-
-                cx = cell.column * cell_size + cell_size // 2
-                cy = cell.row * cell_size + cell_size // 2
-                nx = next_cell_in_path.column * cell_size + cell_size // 2
-                ny = next_cell_in_path.row * cell_size + cell_size // 2
-
-                draw.line([(cx, cy), (nx, ny)], fill=path_color, width=max(1, cell_size // 10))
-
-                dx = nx - cx
-                dy = ny - cy
-                length = math.sqrt(dx * dx + dy * dy)
-                if length > 0:
-                    dx /= length
-                    dy /= length
-
-                arrow_length = cell_size * arrow_size_factor
-                arrow_width = cell_size * arrow_size_factor * 0.5
-
-                base_x = nx - dx * (arrow_length * 0.7)
-                base_y = ny - dy * (arrow_length * 0.7)
-
-                point1_x = base_x - dy * arrow_width
-                point1_y = base_y + dx * arrow_width
-                point2_x = base_x + dy * arrow_width
-                point2_y = base_y - dx * arrow_width
-
-                draw.polygon([(nx, ny), (point1_x, point1_y), (point2_x, point2_y)], fill=path_color)
-
-        return img
-    # ----------------------------------------------- #
-
-
 
     # Crea una immagine PNG della griglia con il percorso risolutivo.
     def to_png_solution_path(self,
@@ -372,7 +309,7 @@ class Grid:
         if end_cell is None:
             end_cell = self._grid[self.rows-1][self.columns-1]
 
-        path_color = (255, 255, 255) # bianco
+        path_color = (255, 255, 255) # bianco per il percorso
         start_color = (255, 200, 0)  # giallo per la radice
         end_color = (0, 255, 255)    # ciano per la cella obiettivo
 

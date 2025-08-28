@@ -41,14 +41,15 @@ class ColoredGrid(Grid):
         if not self._distances or self._distances[cell] is None:
             return None
 
-        # Ottieni la distanza della cella.
-        # Se non esiste ritorna None.
-        distance = self._distances[cell]  # uso operatore [] : invoca __getitem__
-        if distance is None:              # se la cella non è tra le distanze calcolate
-            return None                   # ritorna bianco (default)
+        # Ottieni la distanza della cella rispetto alla root
+        # Se non esiste (la cella non è tra le distanza calcolate)
+        # ritorna None, che in colore è bianco (default)
+        distance = self._distances[cell]
+        if distance is None:
+            return None
 
-        # Quando distance è 0 (alla root o all'inizio del percorso), intensità massima.
-        # Quando distance è _maxdistance (alla fine del percorso o la cella più lontana dallo start), intensità minima = 0.
+        # Quando distance è 0 (alla root o all'inizio del percorso), intensità massima (0).
+        # Quando distance è _maxdistance (alla fine del percorso o la cella più lontana dallo start), intensità minima = 1.
         if self._maxdistance == 0:
             intensity = 0.0
         else:

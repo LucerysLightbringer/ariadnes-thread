@@ -143,7 +143,7 @@ def main():
 
 
     # ---------------------------------------------------------- #
-    # Distanze base (colorata, senza numeri)
+    # Distanze base (colorata, senza distanze)
     img_distances_colored_only = GridVisualize.to_png(cell_size,inset=cell_inset,background_type="checkerboard")
     img_distances_colored_only.save("maze_distances_color.png")
     img_distances_colored_only.show()
@@ -152,7 +152,7 @@ def main():
 
 
     # ---------------------------------------------------------- #
-    # Distanze base (colorata con numeri)
+    # Distanze base (colorata con distanze)
     img_distances_colored_with_numbers = GridVisualize.to_png_distances(maze_distances, cell_size, inset=cell_inset, background_type="checkerboard")
     img_distances_colored_with_numbers.save("maze_distances_color_distance.png")
     img_distances_colored_with_numbers.show()
@@ -179,41 +179,31 @@ def main():
 
 
     # ---------------------------------------------------------- #
-    # Percorso più lungo (colorato senza numeri)
+    # Percorso più lungo (colorato senza distanze)
     GridVisualize.distances = longest_path_distances
     img_longest_path_colored_only = GridVisualize.to_png(cell_size, inset=cell_inset)
     img_longest_path_colored_only.save("maze_longest_path_color.png")
     img_longest_path_colored_only.show()
 
-    # Percorso più lungo (colorato con numeri)
+    # Percorso più lungo (colorato con distanze)
     img_longest_path_colored_with_numbers = GridVisualize.to_png_distances(longest_path_distances, cell_size, inset=cell_inset)
     img_longest_path_colored_with_numbers.save("maze_longest_path_color_distance.png")
     img_longest_path_colored_with_numbers.show()
-
-    # Percorso più lungo (con freccie)
-    img_longest_path_arrows = GridVisualize.to_pgn_arrows(longest_path_distances, cell_size, inset=cell_inset)
-    img_longest_path_arrows.save("maze_longest_path_arrow.png")
-    img_longest_path_arrows.show()
     # ---------------------------------------------------------- #
 
 
 
     # ---------------------------------------------------------- #
-    # Percorso più breve tra root e goal (colorato senza numeri)
+    # Percorso più breve tra root e goal (colorato senza distanze)
     GridVisualize.distances = shortest_path_distances
     img_shortest_path_colored_only = GridVisualize.to_png(cell_size, inset=cell_inset)
     img_shortest_path_colored_only.save("maze_shortest_path_color.png")
     img_shortest_path_colored_only.show()
 
-    # Percorso più breve tra root e goal (colorato con numeri)
+    # Percorso più breve tra root e goal (colorato con distanze)
     img_shortest_path_colored_only = GridVisualize.to_png_distances(shortest_path_distances, cell_size, inset=cell_inset)
     img_shortest_path_colored_only.save("maze_shortest_path_distance.png")
     img_shortest_path_colored_only.show()
-
-    # Percorso più breve tra root e goal (con freccie)
-    img_shortest_path_arrows = GridVisualize.to_pgn_arrows(shortest_path_distances, cell_size, inset=cell_inset)
-    img_shortest_path_arrows.save("maze_shortest_path_arrow.png")
-    img_shortest_path_arrows.show()
     # ----------------------------------------------- #
 
 
