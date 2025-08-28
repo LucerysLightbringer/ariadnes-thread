@@ -4,7 +4,6 @@ from astar import AStar
 from colorgrid import ColoredGrid
 from analyzer import count_deadends
 from analyzer import execution_time_generation
-from distance_grid import DistanceGrid
 from distances import Distances
 from grid import Grid
 from binary_tree import BinaryTree
@@ -235,7 +234,7 @@ def copy_maze_structure(source_grid: Grid, target_grid: Grid):
             target_cell = target_grid[row, col]  # Ottieni la cella corrispondente nella griglia di destinazione
 
             # Per ogni cella a cui 'source_cell' è collegata nella griglia sorgente
-            for linked_source_cell in source_cell.all_links():
+            for linked_source_cell in source_cell.links_as_list():
 
                 # Ottieni la cella collegata corrispondente nella griglia di destinazione
                 target_linked_cell = target_grid[linked_source_cell.row, linked_source_cell.column]
