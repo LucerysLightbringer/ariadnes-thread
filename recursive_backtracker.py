@@ -33,7 +33,7 @@ class RecursiveBacktracker:
             # Cerca le celle adiacenti non ancora linkate
             unlinked_neighbors = [
                 neighbor for neighbor in current_cell.all_neighbors()
-                if not neighbor.links()
+                if not neighbor.links_as_dict()
             ]
 
             # Se non ci sono celle adiacenti non linkati,

@@ -5,7 +5,7 @@ from distances import Distances # per Dijkstra
 # Definisce una cella come un insieme di coordinate 2D (row,column).
 # Inoltre, per ogni cella vengono salvate una serie di informazioni:
 # celle adiacenti (nord,sud,est,ovest)
-# celle con cui è collegata (con cui crea un passaggio)
+# celle con cui è collegata (cioè con cui crea un passaggio)
 class Cell:
 
 
@@ -62,11 +62,11 @@ class Cell:
 
 
     # Ritorna tutte le celle collegate alla cella corrente
-    # Una funzione in forma di lista, una in forma di dizionario
-    def all_links(self):
+    # Una funzione ritorna una lista, una un dizionario
+    def links_as_list(self):
         return list(self._links.keys())
 
-    def links(self):
+    def links_as_dict(self):
         return self._links.keys()
     # ----------------------------------------------- #
 
@@ -127,7 +127,7 @@ class Cell:
 
                 # Per ogni cella collegata alla cella attuale
                 # (ovvero per la quale esiste un passaggio)
-                for linked in cell.all_links():
+                for linked in cell.links_as_list():
 
                     # Se la cella è già stata visitata,
                     # finisci l'attuale iterazione e passa alla prossima

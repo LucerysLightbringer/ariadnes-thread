@@ -58,7 +58,7 @@ class Distances:
         while current_cell != self.root:
 
             # Itero su tutte le celle collegate alla cella corrente
-            for neighbor in current_cell.links():
+            for neighbor in current_cell.links_as_dict():
 
                 # Se una cella collegata ha distanza minore della cella corrente
                 if self[neighbor] < self[current_cell]:
@@ -80,13 +80,13 @@ class Distances:
         max_distance = 0
         max_cell = self.root  # inizializza con la root, in caso non ci siano altre celle
 
-        # Itera sul dizionario (hash) _cells che contiene (cella: distanza)
+        # Itera sul dizionario _cells che contiene (cella: distanza)
         for cell, dist in self._cells.items():
             if dist > max_distance:
                 max_cell = cell
                 max_distance = dist
 
-        return max_cell, max_distance # ritorna coppia hash
+        return max_cell, max_distance # ritorna coppia (cell,distance)
     # ----------------------------------------------- #
     
     
