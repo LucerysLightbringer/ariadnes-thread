@@ -38,7 +38,6 @@ class Distances:
 
     # Utilizzando la matrice delle distanze pre-calcolata,
     # ricostruisce un cammino minimo per quel percorso (root <-> cell_goal).
-    #
     def shortest_path_to(self, cell_goal):
 
         current_cell = cell_goal
