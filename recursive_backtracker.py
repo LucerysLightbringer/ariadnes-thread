@@ -7,12 +7,6 @@ import random
 # Sceglie una cella casuale iniziale, cerca tra le celle adiacenti e collega quelle
 # non visitate. Quando non ci sono celle adiacenti non visitate, l'algoritmo torna indietro
 # lungo il percorso fino a trovare una cella con vicini non visitati.
-# - Complessità computazionale: O=(N), dove N sono le celle della griglia. Le visita tutte esattamente una volta.
-#   Ogni cella viene visitata una volta, perché quando gli adiacenti (neighbors) di una cella sono linkati, la cella
-#   viene pushata o poppata nello stack. Per ogni cella l'algoritmo controlla tutti gli adiacenti per trovare quelli
-#   non linkati che è una costante (massimo 4 per ogni cella).
-#
-# - Efficienza di memoria: O=(N), dove N sono le celle della griglia, a causa dello stack.
 class RecursiveBacktracker:
 
     @staticmethod
@@ -30,13 +24,13 @@ class RecursiveBacktracker:
             # Ottieni l'ultima cella nello stack senza rimuoverla
             current_cell = stack[-1]
 
-            # Cerca le celle adiacenti non ancora linkate
+            # Cerca le celle adiacenti non ancora collegate
             unlinked_neighbors = [
                 neighbor for neighbor in current_cell.all_neighbors()
                 if not neighbor.all_linked()
             ]
 
-            # Se non ci sono celle adiacenti non linkati,
+            # Se non ci sono celle adiacenti non collegate,
             # rimuovi la cella in cima allo stack,
             # ovvero la cella corrente
             if not unlinked_neighbors:

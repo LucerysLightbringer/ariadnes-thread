@@ -7,20 +7,8 @@ import random
 # se la cella ha una adiacente a est, posso tagliare il muro a est
 # scelgo casualmente tra le due opzioni per il taglio
 # ovviamente non taglio sulle celle dei bordi
-
-# Complessità computazionale: O=(N), dove N sono le celle della griglia.
-# Efficienza di memoria: O=(N), dove N sono le celle della griglia.
 class BinaryTree:
 
-    # Bias di BinaryTree:
-    # - La riga più a nord è sempre un passaggio ininterrotto.
-    # - La colonna più a est è sempre un passaggio ininterrotto.
-    # - Se parto dalla cella sud-ovest e cerco di raggiungere la cella nord-est, il cammino sarà sempre simile.
-    #   (Tenderà ad essere lungo una diagonale, oppure lungo la colonna est).
-    #   Infatti ogni cella avrà un'uscita nord o est, quindi ci si può sempre muovere in direzione nord-est.
-
-
-    # Metodo statico, non ho bisogno di instanziare una classe BinaryTree.
     @staticmethod
     def apply(grid):
 

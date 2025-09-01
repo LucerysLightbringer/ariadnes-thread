@@ -2,29 +2,14 @@ import random
 
 
 # Algoritmo di generazione dei labirinti Sidewinder.
-# Partendo da una cella casuale, ed iterando per ogni cella della griglia,
-# ma una riga per volta, :
-# - Decido casualmente se andare a est (aggiungendo la cella al gruppo)
-#   oppure tagliare a nord (in una cella causale del gruppo corrente).
-#   Dopo che ho tagliato a nord, sciogliamo il gruppo e continuo
-#   con le restanti celle della riga corrente. Dopo aver finito
-#   con la riga corrente, continuo per le altre righe.
+# Decido casualmente se andare a est (aggiungendo la cella al gruppo)
+# oppure tagliare a nord (in una cella causale del gruppo corrente).
+# Dopo che ho tagliato a nord, sciogliamo il gruppo e continuo
+# con le restanti celle della riga corrente. Dopo aver finito
+# con la riga corrente, continuo per le altre righe.
 
-# - Complessità computazionale: O=(N), dove N sono le celle della griglia.
-# - Efficienza di memoria: O=(N + K), dove N sono le celle della griglia e K l'array group
-#   Ha solamente bisogno di abbastanza memoria per rappresentare una singola cella ad ogni istante,
-#   e per ogni cella ha bisogno di salvare il gruppo di cui fa parte, che risulta in un array che però
-#   viene cancellato ogni volta che si cambia gruppo, quindi diventa una costante.
 class Sidewinder:
 
-    # Bias di Sidewinder:
-    # - La riga più a nord è sempre un passaggio ininterrotto.
-    # - La colonna più a est potrebbe essere un passaggio ininterrotto, ma meno spesso rispetto a Binary Tree.
-    # - Se parto dalla cella sud-ovest e cerco di raggiungere la cella nord-est, il cammino sarà sempre simile.
-    #   Infatti ogni gruppo orizzontale di celle avrà esattamente un'uscita nord, quindi ci si può sempre muovere in direzione nord-est.
-
-
-    # Metodo statico, non ho bisogno di instanziare una classe Sidewinder.
     @staticmethod
     def apply(grid):
 
@@ -60,8 +45,8 @@ class Sidewinder:
                     # Seleziono causalmente una cella dal gruppo corrente
                     new_cell = random.choice(group)
 
-                    # Taglio a nord di questa cella, ovvero linko la cella
-                    # creando un passaggio.
+                    # Taglio a nord di questa cella,
+                    # ovvero collego la cella creando un passaggio.
                     if new_cell.north:
                         new_cell.link(new_cell.north)
 
@@ -70,6 +55,6 @@ class Sidewinder:
                     group.clear()
 
                 else:
-                    cell.link(cell.east) # Altrimenti mi linko ad est, creando un passaggio
+                    cell.link(cell.east) # Altrimenti mi collego ad est, creando un passaggio
 
         return grid
