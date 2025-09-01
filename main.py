@@ -1,9 +1,6 @@
 import time
 
 from astar import AStar
-from colorgrid import ColoredGrid
-from analyzer import count_deadends
-from analyzer import execution_time_generation
 from distances import Distances
 from grid import Grid
 from binary_tree import BinaryTree
