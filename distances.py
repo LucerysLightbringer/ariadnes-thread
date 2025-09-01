@@ -1,20 +1,14 @@
 # Classe usata per salvare le distanze di ogni cella da una cella root arbitraria.
-# Utilizzare una classe apposta potrebbe sembrare inutile, ma così non dobbiamo riscrivere
-# la classe Cell, e in più isoliamo la responsabilità di salvare informazioni sulle celle
-# che alcuni algoritmi potrebbero anche non utilizzare mai.
 class Distances:
-
-
 
     # La cella arbitraria iniziale è root.
     # Il costruttore semplicemente inizializza un dizionario (cell,distance)
-    # con distanza dalla root = 0.
+    # con distanza dalla root == 0.
     def __init__(self, root):
 
         self.root = root
         self._cells = {root: 0} 
     # ----------------------------------------------- #
-
 
 
     # Definisco la sintassi [i] per poter ottenere la distanza di una singola cella dalla root.
@@ -25,13 +19,11 @@ class Distances:
     # ----------------------------------------------- #
 
 
-
     # Definisco la sintassi [i] per poter settare la distanza di una singola cella dalla root.
     # [i] = k, dove k è la distanza da settare.
     def __setitem__(self, cell, distance):
         self._cells[cell] = distance
     # ----------------------------------------------- #
-
 
 
     # Ritorna la lista di tutte le distanze.
@@ -44,10 +36,9 @@ class Distances:
     # ----------------------------------------------- #
 
 
-
-    # Utilizzando la matrice delle distanze calcolata
-    # tramite BFS (una versione semplificata per pesi == 1), faccio il backtracking verso la root da una cella
-    # qualsiasi cell_goal, trovando un cammino minimo per quel percorso (root <-> cell_goal).
+    # Utilizzando la matrice delle distanze pre-calcolata,
+    # ricostruisce un cammino minimo per quel percorso (root <-> cell_goal).
+    #
     def shortest_path_to(self, cell_goal):
 
         current_cell = cell_goal
@@ -61,17 +52,17 @@ class Distances:
             for neighbor in current_cell.links_as_dict():
 
                 # Se una cella collegata ha distanza minore della cella corrente
+                # è quella da cui si è arrivati
                 if self[neighbor] < self[current_cell]:
 
-                    # Rendo la cella corrente quella con distanza minore,
+                    # Rendo la cella corrente quella con distanza minore (neighbor),
                     # esco dal ciclo e ricomincio con la nuova cella corrente
                     backtrack[neighbor] = self[neighbor]
                     current_cell = neighbor
                     break
 
-        return backtrack
+        return backtrack # dizionario (cell,distance)
     # ----------------------------------------------- #
-
 
 
     # Calcola la cella con distanza massima dalla root.
@@ -82,6 +73,7 @@ class Distances:
 
         # Itera sul dizionario _cells che contiene (cella: distanza)
         for cell, dist in self._cells.items():
+
             if dist > max_distance:
                 max_cell = cell
                 max_distance = dist
