@@ -58,10 +58,7 @@ class Cell:
 
     # Ritorna tutte le celle collegate alla cella corrente
     # Una funzione ritorna una lista, una un dizionario
-    def links_as_list(self):
-        return list(self._links.keys())
-
-    def links_as_dict(self):
+    def all_linked(self):
         return self._links.keys()
     # ----------------------------------------------- #
 
@@ -118,7 +115,7 @@ class Cell:
 
                 # Per ogni cella collegata alla cella attuale
                 # (ovvero per la quale esiste un passaggio)
-                for linked in cell.links_as_dict():
+                for linked in cell.all_linked():
 
                     # Se la cella è già stata visitata,
                     # finisci l'attuale iterazione e passa alla prossima

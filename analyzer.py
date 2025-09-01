@@ -304,10 +304,10 @@ if __name__ == "__main__":
 
     rows = 100
     columns = 100
-    tries = 10
+    tries = 1000
 
 
-    count_deadends(rows, columns, tries)
+    #count_deadends(rows, columns, tries)
     #longest_path_length(rows, columns, tries, show_every_try=True)
 
     #gen = [RecursiveBacktracker]
@@ -316,7 +316,7 @@ if __name__ == "__main__":
     #execution_time_resolution(rows, columns, tries, maze_generator=AldousBroder, show_every_try=True)
     #execution_time_resolution(rows, columns, tries, maze_generator=BinaryTree, show_every_try=True)
     #execution_time_resolution(rows, columns, tries, maze_generator=Sidewinder, show_every_try=True)
-    #execution_time_resolution(rows, columns, tries, maze_generator=RecursiveBacktracker, show_every_try=True)
+    execution_time_resolution(rows, columns, tries, maze_generator=RecursiveBacktracker, show_every_try=True)
 
 
     #write_on_file("analysis_results.txt", rows, columns, tries, show_every_try=False)

@@ -150,7 +150,7 @@ class Grid:
 
             # Controlla se la cella ha esattamente una sola cella collegata
             # ovvero è un vicolo cieco
-            if len(cell.links_as_dict()) == 1:
+            if len(cell.all_linked()) == 1:
                 deadends.append(cell)
 
         return deadends

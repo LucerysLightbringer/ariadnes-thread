@@ -185,7 +185,7 @@ def copy_maze_structure(source_grid: Grid, target_grid: Grid):
             target_cell = target_grid[row, col]  # Ottieni la cella corrispondente nella griglia di destinazione
 
             # Per ogni cella a cui 'source_cell' è collegata nella griglia sorgente
-            for linked_source_cell in source_cell.links_as_list():
+            for linked_source_cell in source_cell.all_linked():
 
                 # Ottieni la cella collegata corrispondente nella griglia di destinazione
                 target_linked_cell = target_grid[linked_source_cell.row, linked_source_cell.column]

@@ -25,7 +25,7 @@ class AStar:
         tie_breaker_counter += 1  # Incrementa il contatore per il prossimo inserimento.
 
         # Dizionario per ricostruire il percorso
-        path_came_from = {}
+        path = {}
 
         # g_score è il costo del percorso dalla cella di partenza alla cella corrente.
         # Inizializziamo tutti i costi a infinito.
@@ -53,16 +53,16 @@ class AStar:
                 solution_path = []
                 temp = goal_cell
 
-                while temp in path_came_from:
+                while temp in path:
                     solution_path.append(temp)
-                    temp = path_came_from[temp]
+                    temp = path[temp]
 
                 solution_path.append(root)
                 return solution_path[::-1] # inverto il percorso
 
-
-            # Osservo tutte le celle collegate a quella attuale
-            for neighbor in current_cell.links_as_list():
+            # Se la cella attuale non è la cella obiettivo,
+            # visito le celle collegate a quella attuale
+            for neighbor in current_cell.all_linked():
 
                 # Il costo per raggiungere la cella adiacente attraverso la cella corrente.
                 # Nel nostro caso (labirinto ortogonale), costo unitario.
@@ -74,7 +74,7 @@ class AStar:
                 if tentative_g_score < g_score[neighbor]:
 
                     # Aggiorno scores della cella adiacente
-                    path_came_from[neighbor] = current_cell
+                    path[neighbor] = current_cell
                     g_score[neighbor] = tentative_g_score
                     f_score[neighbor] = g_score[neighbor] + AStar._manhattan_distance(neighbor, goal_cell)
 

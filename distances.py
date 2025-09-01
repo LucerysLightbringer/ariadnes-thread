@@ -48,7 +48,7 @@ class Distances:
         while current_cell != self.root:
 
             # Itero su tutte le celle collegate alla cella corrente
-            for neighbor in current_cell.links_as_dict():
+            for neighbor in current_cell.all_linked():
 
                 # Se una cella collegata ha distanza minore della cella corrente
                 # è quella da cui si è arrivati
