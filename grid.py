@@ -289,7 +289,7 @@ class Grid:
             if end_cell is None:
                 end_cell = solution_path[-1]
 
-            path_color = (255, 255, 255) # bianco
+            path_color = (240, 50, 255)  # viola
             start_color = (255, 200, 0)  # giallo
             end_color = (0, 255, 255)    # ciano
 
