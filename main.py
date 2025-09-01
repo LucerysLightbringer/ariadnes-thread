@@ -45,7 +45,7 @@ def main():
     # ----------------------------------------------- #
     # Calcolo distanze: tutte le distanze da root
     start_time = time.perf_counter()
-    maze_distances = root.distances()
+    maze_distances = root.calc_all_distances()
     end_time = time.perf_counter()
 
     execution_time = end_time - start_time
@@ -61,7 +61,7 @@ def main():
     # Calcolo percorso più lungo dalla radice.
     start_time = time.perf_counter()
     longest_path_root, _ = maze_distances.longest_path_to()
-    distances_from_longest_path_root = longest_path_root.distances()
+    distances_from_longest_path_root = longest_path_root.calc_all_distances()
 
     # Calcolo percorso più lungo dalla nuova radice
     longest_path_goal, max_dist_longest_path = distances_from_longest_path_root.longest_path_to()

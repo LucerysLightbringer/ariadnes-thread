@@ -173,13 +173,13 @@ def longest_path_length(rows=100, columns=100, tries=100,
             root = testgrid[0,0]
 
             # Calcola tutte le distanze dalla root
-            maze_distances = root.distances()
+            maze_distances = root.calc_all_distances()
 
             # Calcolo percorso più lungo dalla radice
             start_time = time.perf_counter()
 
             longest_path_root, _ = maze_distances.longest_path_to()
-            distances_from_longest_path_root = longest_path_root.distances()
+            distances_from_longest_path_root = longest_path_root.calc_all_distances()
 
             # Calcolo percorso più lungo dalla nuova radice
             longest_path_goal, max_dist_longest_path = distances_from_longest_path_root.longest_path_to()
