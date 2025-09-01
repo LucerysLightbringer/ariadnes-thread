@@ -65,7 +65,7 @@ class Distances:
 
 
     # Calcola la cella con distanza massima dalla root.
-    def longest_path_to(self):
+    def longest_path_from(self):
 
         max_distance = 0
         max_cell = self.root  # inizializza con la root, in caso non ci siano altre celle

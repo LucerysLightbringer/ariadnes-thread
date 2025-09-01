@@ -85,7 +85,7 @@ class Grid:
         # Trova la cella più lontana e la sua distanza massima tramite longest_path_to(),
         # ritorna la cella e la sua distanza.
         if distances_obj:
-            farthest_cell, self._maxdistance = distances_obj.longest_path_to()
+            farthest_cell, self._maxdistance = distances_obj.longest_path_from()
         else:
             self._maxdistance = 0
     # ----------------------------------------------- #

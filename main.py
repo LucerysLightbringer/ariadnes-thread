@@ -60,11 +60,11 @@ def main():
     # ----------------------------------------------- #
     # Calcolo percorso più lungo dalla radice.
     start_time = time.perf_counter()
-    longest_path_root, _ = maze_distances.longest_path_to()
+    longest_path_root, _ = maze_distances.longest_path_from()
     distances_from_longest_path_root = longest_path_root.calc_all_distances()
 
     # Calcolo percorso più lungo dalla nuova radice
-    longest_path_goal, max_dist_longest_path = distances_from_longest_path_root.longest_path_to()
+    longest_path_goal, max_dist_longest_path = distances_from_longest_path_root.longest_path_from()
 
     # Calcolo il percorso più corto tra le due celle
     longest_path_distances = distances_from_longest_path_root.shortest_path_to(longest_path_goal)

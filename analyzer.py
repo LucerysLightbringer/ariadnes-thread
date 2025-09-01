@@ -178,11 +178,11 @@ def longest_path_length(rows=100, columns=100, tries=100,
             # Calcolo percorso più lungo dalla radice
             start_time = time.perf_counter()
 
-            longest_path_root, _ = maze_distances.longest_path_to()
+            longest_path_root, _ = maze_distances.longest_path_from()
             distances_from_longest_path_root = longest_path_root.calc_all_distances()
 
             # Calcolo percorso più lungo dalla nuova radice
-            longest_path_goal, max_dist_longest_path = distances_from_longest_path_root.longest_path_to()
+            longest_path_goal, max_dist_longest_path = distances_from_longest_path_root.longest_path_from()
             end_time = time.perf_counter()
 
             exec_time = end_time - start_time

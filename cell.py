@@ -94,7 +94,7 @@ class Cell:
 
 
     # Algoritmo BFS per il calcolo delle distanze di ogni cella dalla cella root.
-    # Complessità computazionale: O=(V + E) dove (V = RxC) ed (E = 4V) (circa)
+    # Complessità computazionale: O=(V + E) dove (V = RxC) ed (E = 4V) (Acirca)
     def calc_all_distances(self):
 
         # Creo istanza di oggetto distances.
