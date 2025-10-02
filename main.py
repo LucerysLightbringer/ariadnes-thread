@@ -8,18 +8,18 @@ from binary_tree import BinaryTree
 from sidewinder import Sidewinder
 from aldous_broder import AldousBroder
 from recursive_backtracker import RecursiveBacktracker
-
+from recursive_division import RecursiveDivision
 
 def main():
 
 
     # ----------------------------------------------- #
-    maze_row = 100
-    maze_col = 100
+    maze_row = 10
+    maze_col = 10
     MazeGrid = Grid(maze_row,maze_col)
 
     start_time = time.perf_counter()
-    RecursiveBacktracker.apply(MazeGrid)
+    RecursiveDivision.apply(MazeGrid)
     end_time = time.perf_counter()
 
     # Scelgo arbitrariamente celle root e goal
@@ -88,7 +88,7 @@ def main():
     img_maze_checkerboard.save("maze_checkerboard.png")
     img_maze_checkerboard.show()
 
-    img_maze_all_white = MazeGrid.to_png(cell_size=cell_size, background_type="plain-white")
+    img_maze_all_white = MazeGrid.to_png(cell_size=cell_size, background_type="plain_white")
     img_maze_all_white.save("maze_all_white.png")
     img_maze_all_white.show()
     # ----------------------------------------------- #
@@ -108,15 +108,19 @@ def main():
 
 
     # Distanze base (colorata, senza distanze)
-    img_distances_color = MazeGrid.to_png(cell_size, background_type="plain_white", show_distances=False)
+    img_distances_color = MazeGrid.to_png(cell_size,
+                                          background_type="plain_white",
+                                          show_distances=False)
     img_distances_color.save("maze_distances_color.png")
     img_distances_color.show()
     # ----------------------------------------------- #
 
 
     # Distanze base (colorata con distanze)
-    img_distances_distance = MazeGrid.to_png(cell_size, background_type="plain_white",
-                                                              show_distances=True, distances_obj=maze_distances)
+    img_distances_distance = MazeGrid.to_png(cell_size,
+                                             background_type="plain_white",
+                                             show_distances=True,
+                                             distances_obj=maze_distances)
     img_distances_distance.save("maze_distances_distance.png")
     img_distances_distance.show()
     # ----------------------------------------------- #
@@ -133,9 +137,10 @@ def main():
     else:
         print("Nessun percorso trovato.")
 
-    img_solution_path_astar = MazeGrid.to_png(cell_size, background_type="plain_white",
-                                                   show_solution=True, solution_path=solution_path,
-                                                   start_cell = root, end_cell = goal_cell)
+    img_solution_path_astar = MazeGrid.to_png(cell_size,
+                                              background_type="plain_white",
+                                              show_solution=True, solution_path=solution_path,
+                                              start_cell = root, end_cell = goal_cell)
     img_solution_path_astar.save("maze_solution_astar.png")
     img_solution_path_astar.show()
     # ----------------------------------------------- #
@@ -145,24 +150,29 @@ def main():
     # ---------------------------------------------------------- #
     # Percorso più lungo (colorato senza distanze)
     MazeGrid.distances = longest_path_distances
-    img_longest_path_default = MazeGrid.to_png(cell_size, background_type="plain_white", show_distances=False)
+    img_longest_path_default = MazeGrid.to_png(cell_size,
+                                               background_type="plain_white",
+                                               show_distances=False)
     img_longest_path_default.save("maze_longest_path_color.png")
     img_longest_path_default.show()
 
 
     # Percorso più lungo (colorato con distanze)
-    img_longest_path_distances = MazeGrid.to_png(cell_size, background_type="plain_white",
-                                                                 show_distances=True, distances_obj=longest_path_distances)
+    img_longest_path_distances = MazeGrid.to_png(cell_size,
+                                                 background_type="plain_white",
+                                                 show_distances=True,
+                                                 distances_obj=longest_path_distances)
     img_longest_path_distances.save("maze_longest_path_distance.png")
     img_longest_path_distances.show()
 
 
     longest_path = AStar.apply(MazeGrid, longest_path_root, longest_path_goal)
     # Percorso più lungo (colorato con percorso)
-    img_longest_path_solution = MazeGrid.to_png(cell_size, background_type="plain_white",
-                                                                 show_distances=False,
-                                                                 show_solution=True, solution_path=longest_path,
-                                                                 start_cell = longest_path_root, end_cell = longest_path_goal)
+    img_longest_path_solution = MazeGrid.to_png(cell_size,
+                                                background_type="plain_white",
+                                                show_distances=False,
+                                                show_solution=True, solution_path=longest_path,
+                                                start_cell = longest_path_root, end_cell = longest_path_goal)
     img_longest_path_solution.save("maze_longest_path_solution.png")
     img_longest_path_solution.show()
     # ---------------------------------------------------------- #

@@ -35,7 +35,7 @@ class RecursiveDivision:
             return
 
         # Dividi orizzontalmente o verticalmente
-        if rows > columns:
+        if rows >= columns:
             RecursiveDivision._divide_horizontal(grid, row, col, rows, columns)
         else:
             RecursiveDivision._divide_vertical(grid, row, col, rows, columns)
@@ -75,11 +75,11 @@ class RecursiveDivision:
     @staticmethod
     def _divide_vertical(grid, row, col, rows, columns):
 
-        # Scegli riga casuale dove costruire il muro.
+        # Scegli colonna casuale dove costruire il muro.
         # Indica l'indice a OVEST del muro
         wall_east = random.randrange(columns - 1)
 
-        # Scegli colonna casuale dove scavare il passaggio nel muro
+        # Scegli riga casuale dove scavare il passaggio nel muro
         passage = random.randrange(rows)
 
         # Itera lungo la linea scelta e crea il muro

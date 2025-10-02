@@ -7,7 +7,6 @@ import random
 # Dopo che ho tagliato a nord, sciogliamo il gruppo e continuo
 # con le restanti celle della riga corrente. Dopo aver finito
 # con la riga corrente, continuo per le altre righe.
-
 class Sidewinder:
 
     @staticmethod
