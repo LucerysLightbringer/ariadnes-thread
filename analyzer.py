@@ -4,6 +4,7 @@ import time
 from astar import AStar
 from grid import Grid
 from binary_tree import BinaryTree
+from recursive_division import RecursiveDivision
 from sidewinder import Sidewinder
 from aldous_broder import AldousBroder
 from recursive_backtracker import RecursiveBacktracker
@@ -16,7 +17,7 @@ def execution_time_generation(rows=100, columns=100, tries=100,
     print("-----CALCOLO ALGORITMI GENERATIVI-----")
 
     if algorithms is None:
-        algorithms = [BinaryTree, Sidewinder, RecursiveBacktracker, AldousBroder]
+        algorithms = [BinaryTree, Sidewinder, RecursiveBacktracker, AldousBroder, RecursiveDivision]
 
     averages = {}
 
@@ -24,14 +25,11 @@ def execution_time_generation(rows=100, columns=100, tries=100,
     for algo in algorithms:
 
         print(f"\nAnalisi: {algo.__name__}")
-
         execution_time = []
 
         # ------------------------------------- #
         for i in range(tries):
-
             testgrid = Grid(rows, columns)
-
             start_time = time.perf_counter()
             algo.apply(testgrid)
             end_time = time.perf_counter()
@@ -46,14 +44,10 @@ def execution_time_generation(rows=100, columns=100, tries=100,
     # ------------------------------------- #
 
     print(f"\nMedia di esecuzione per ({rows}x{columns}): ({tries} tentativi)")
-
     sorted_algorithms = sorted(algorithms, key=lambda alg: averages.get(alg.__name__, float('inf')))
-
     # ------------------------------------- #
     for algo in sorted_algorithms:
-
         average_time = averages.get(algo.__name__, 0)
-
         if average_time >= 60:
             print(f"{algo.__name__}: [ {average_time / 60:.3f}m | {average_time:.3f}s | {average_time * 1000:.3f}ms ]")
         else:
@@ -81,7 +75,6 @@ def execution_time_resolution(rows=100, columns=100, tries=100,
     for algo in maze_solvers:
 
         print(f"\nAnalisi {algo.__name__} per {maze_generator.__name__}")
-
         execution_times = []
         path_lengths = []
 
@@ -125,17 +118,12 @@ def execution_time_resolution(rows=100, columns=100, tries=100,
     # ------------------------------------- #
 
     print(f"\nMedia di esecuzione per ({rows}x{columns}): ({tries} tentativi)")
-
     sorted_solvers = sorted(maze_solvers, key=lambda s: performance_metrics.get(s.__name__, {"average_time": float('inf')})["average_time"])
-
     # ------------------------------------- #
     for algo in sorted_solvers:
-
         metrics = performance_metrics.get(algo.__name__)
-
         metric_time = metrics["average_time"]
         metric_path = metrics["average_length"]
-
         print(f"{algo.__name__}: \n\t"
               f"[ {metric_time / 60:.3f}m | {metric_time:.3f}s | {(metric_time * 1000):.3f}ms ] \n\t"
               f"Lunghezza media soluzione: {metric_path} \n")
@@ -153,7 +141,7 @@ def longest_path_length(rows=100, columns=100, tries=100,
     print("-----CALCOLO PERCORSO PIU' LUNGO-----")
 
     if algorithms is None:
-        algorithms = [BinaryTree, Sidewinder, RecursiveBacktracker, AldousBroder]
+        algorithms = [BinaryTree, Sidewinder, RecursiveBacktracker, AldousBroder, RecursiveDivision]
 
     performance_metrics = {}
 
@@ -162,7 +150,6 @@ def longest_path_length(rows=100, columns=100, tries=100,
 
         execution_times = []
         path_lengths = []
-
         print(f"\nAnalisi {algo.__name__}")
 
         # ------------------------------------- #
@@ -213,14 +200,10 @@ def longest_path_length(rows=100, columns=100, tries=100,
     # ------------------------------------- #
 
     print(f"\nMedia di esecuzione per ({rows}x{columns}): ({tries} tentativi)")
-
     sorted_solvers = sorted(algorithms, key=lambda s: performance_metrics.get(s.__name__, {"average_time": float('inf')})["average_time"])
-
     # ------------------------------------- #
     for algo in sorted_solvers:
-
         metrics = performance_metrics.get(algo.__name__)
-
         metric_time = metrics["average_time"]
         metric_path = metrics["average_length"]
         print(f"{algo.__name__}: \n\t"
@@ -239,7 +222,7 @@ def count_deadends(rows=100, columns=100, tries=100, algorithms=None):
     print("-----CALCOLO VICOLI CIECHI-----")
 
     if algorithms is None:
-        algorithms = [BinaryTree, Sidewinder, RecursiveBacktracker, AldousBroder]
+        algorithms = [BinaryTree, Sidewinder, RecursiveBacktracker, AldousBroder, RecursiveDivision]
 
     averages = {}
 
@@ -247,17 +230,13 @@ def count_deadends(rows=100, columns=100, tries=100, algorithms=None):
     for algo in algorithms:
 
         print(f"\nAnalisi: {algo.__name__} ({rows}x{columns})")
-
         count_deadends = []
 
         # ------------------------------------- #
         for i in range(tries):
-
             print(f"Try {i}: ")
-
             testgrid = Grid(rows, columns)
             algo.apply(testgrid)
-
             count_deadends.append(len(testgrid.deadends()))
         # ------------------------------------- #
 
@@ -265,20 +244,17 @@ def count_deadends(rows=100, columns=100, tries=100, algorithms=None):
     # ------------------------------------- #
 
     print(f"\nMedia di vicoli ciechi totali per ({rows}x{columns}): ({tries} tentativi)")
-
     sorted_algorithms = sorted(algorithms, key=lambda alg: averages.get(alg.__name__, float('inf')))
-
     # ------------------------------------- #
     for algo in sorted_algorithms:
-
         average_count = averages[algo.__name__]
         percentage = (average_count * 100.0) / (rows * columns)
-
         print(f"{algo.__name__}: {average_count}/{(rows * columns)} | {percentage:.3f}%")
     # ------------------------------------- #
 
     print("\n")
 # ---------------------------------------------------------------------------- #
+
 
 
 # Scrivi le metriche su un file
@@ -291,32 +267,133 @@ def write_on_file(filepath, rows=100, cols=100, tries=100, show_every_try=False)
 
             sys.stdout = f
 
-            #gen = [BinaryTree, Sidewinder, RecursiveBacktracker, AldousBroder]
-
+            algos = [BinaryTree, Sidewinder, AldousBroder, RecursiveBacktracker, RecursiveDivision]
+            full_analysis(rows, columns, tries, algos, show_every_try=True)
 
     finally:
         sys.stdout = original_stdout
 # ---------------------------------------------------------------------------- #
 
 
+# Analizza tutte le metriche per ogni tentativo
+def full_analysis(rows=100, columns=100, tries=100, algorithms=None, show_every_try=False):
+
+    print(f"----- ANALISI COMPLETA -----")
+
+    if algorithms is None:
+        algorithms = [BinaryTree, Sidewinder, RecursiveBacktracker, AldousBroder, RecursiveDivision]
+
+    metrics = {
+        algo.__name__: {
+            "generative_time": [],
+            "deadends": [],
+            "longest_path_length": [],
+            "resolution_time": [],
+            "solution_length": []
+        }
+        for algo in algorithms
+    }
+
+    # ------------------------------------- #
+    for algo in algorithms:
+
+        print(f"\nAnalisi: {algo.__name__}")
+
+        # ------------------------------------- #
+        for i in range(tries):
+
+            if show_every_try:
+                print(f"Try {i + 1}: ")
+
+            testgrid = Grid(rows, columns)
+
+            # Tempo di esecuzione algoritmo generativo
+            start_time = time.perf_counter()
+            algo.apply(testgrid)
+            end_time = time.perf_counter()
+            metrics[algo.__name__]["generative_time"].append(end_time - start_time)
+
+            # Vicoli ciechi
+            dead_ends = len(testgrid.deadends())
+            metrics[algo.__name__]["deadends"].append(dead_ends)
+
+            # Percorso più lungo
+            root = testgrid[0,0]
+            distances = root.calc_all_distances()
+
+            new_root, _ = distances.longest_path_from()
+            new_distances = new_root.calc_all_distances()
+            _, longest_path = new_distances.longest_path_from()
+
+            metrics[algo.__name__]["longest_path_length"].append(longest_path)
+
+            # Tempo di esecuzione algoritmo risolutivo A*
+            start_cell = testgrid.random_cell()
+            end_cell = testgrid.random_cell()
+
+            start_time = time.perf_counter()
+            solution_path = AStar.apply(testgrid, start_cell, end_cell)
+            end_time = time.perf_counter()
+
+            metrics[algo.__name__]["resolution_time"].append(end_time - start_time)
+            metrics[algo.__name__]["solution_length"].append(len(solution_path))
+        # ------------------------------------- #
+    # ------------------------------------- #
+
+    print(f"\nMedia di esecuzione per ({rows}x{columns}): ({tries} tentativi)")
+    averages = {}
+    # ------------------------------------- #
+    for algo_name, metric in metrics.items():
+        avg_gen_time = sum(metric["generative_time"]) / tries
+        avg_deadends = sum(metric["deadends"]) / tries
+        avg_longest_path = sum(metric["longest_path_length"]) / tries
+        avg_res_time = sum(metric["resolution_time"]) / tries
+        avg_solution_path = sum(metric["solution_length"]) / tries
+
+        averages[algo_name] = {
+            "generative_time": avg_gen_time,
+            "deadends": avg_deadends,
+            "longest_path_length": avg_longest_path,
+            "resolution_time": avg_res_time,
+            "solution_length": avg_solution_path
+        }
+    # ------------------------------------- #
+
+    sorted_algorithms = sorted(averages.keys(), key=lambda name: averages[name]["generative_time"])
+    for algo_name in sorted_algorithms:
+        stats = averages[algo_name]
+        total_cells = rows * columns
+        dead_ends_percentage = (stats["deadends"] * 100) / total_cells
+
+        print(f"\n----- {algo_name} -----")
+        print(f"    Tempo medio generativo: [ {stats['generative_time']:.3f}s ] [ {stats['generative_time']*1000:.3f}ms ]")
+        print(f"    Tempo medio risolutivo: [ {stats['resolution_time']:.3f}s ] [ {stats['resolution_time']*1000:.3f}ms ]")
+        print(f"    Lunghezza media soluzione: {stats['solution_length']:.3f}")
+        print(f"    Lunghezza media percorso più lungo: {stats['longest_path_length']:.3f}")
+        print(f"    Numero medio di vicoli ciechi: {stats['deadends']:.3f} / {total_cells} ({dead_ends_percentage:.3f}%)")
+# ---------------------------------------------------------------------------- #
+
+
 
 if __name__ == "__main__":
 
-    rows = 100
-    columns = 100
-    tries = 1000
+    rows = 1000
+    columns = 1000
+    tries = 200
 
+    #algos = [BinaryTree, Sidewinder, AldousBroder, RecursiveBacktracker, RecursiveDivision]
+    #full_analysis(rows, columns, tries, algos, show_every_try=True)
 
     #count_deadends(rows, columns, tries)
     #longest_path_length(rows, columns, tries, show_every_try=True)
 
-    #gen = [RecursiveBacktracker]
+    #gen = [BinaryTree, Sidewinder, AldousBroder, RecursiveBacktracker, RecursiveDivision]
     #execution_time_generation(rows, columns, tries, gen, show_every_try=True)
 
-    #execution_time_resolution(rows, columns, tries, maze_generator=AldousBroder, show_every_try=True)
     #execution_time_resolution(rows, columns, tries, maze_generator=BinaryTree, show_every_try=True)
     #execution_time_resolution(rows, columns, tries, maze_generator=Sidewinder, show_every_try=True)
-    execution_time_resolution(rows, columns, tries, maze_generator=RecursiveBacktracker, show_every_try=True)
+    #execution_time_resolution(rows, columns, tries, maze_generator=RecursiveBacktracker, show_every_try=True)
+    #execution_time_resolution(rows, columns, tries, maze_generator=RecursiveDivision, show_every_try=True)
+    #execution_time_resolution(rows, columns, tries, maze_generator=AldousBroder, show_every_try=True)
 
-
-    #write_on_file("analysis_results.txt", rows, columns, tries, show_every_try=False)
+    write_on_file("analysis_results.txt", rows, columns, tries, show_every_try=False)
