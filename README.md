@@ -8,22 +8,22 @@ Vengono anche mostrate una serie di caratteristiche
 per poter definire e distinguere i vari tipi di labirinti.
 
 ## Capitolo 2 - Algoritmo A*
-Viene brevemente presentato l'algoritmo risolutivo A* per poter ottenere alcune statistiche ed analizzare
-le proprietà degli algoritmi generativi.
+Viene brevemente presentato l'algoritmo risolutivo A*.
 
 ## Capitolo 3 - Algoritmi generativi
 Vengono descritti i vari algoritmi che permettono di generare i labirinti. Per ogni algoritmo viene
-analizzato lo pseudocodice, la complessità computazionale e quali tipi di labirinti permette di costruire.
+analizzato lo pseudocodice, la complessità computazionale e spaziale e viene descritto
+che tipo di labirinti permette di costruire.
 
-Vengono anche analizzate una serie di proprietà per ogni algoritmo generativo basandosi su una serie di statistiche,
-raccolte su vari campioni:
+## Capitolo 4 - Statistiche
+Vengono analizzate una serie di proprietà per ogni algoritmo generativo basandosi su delle statistiche,
+raccolte sui seguenti campioni:
+- labirinti 100x100 su 1000 casi
+- labirinti 200x200 su 1000 casi
+- labirinti 500x500 su 500 casi
 
-- labirinti 100x100 per 1000 casi
-- labirinti 200x200 per 1000 casi
-- labirinti 500x500 per 1000 casi
-
-## Capitolo 4 - Conclusioni
-Vengono tratte le conclusioni sul lavoro svolto, basandosi sulle analisi ottenute dalle statistiche.
+## Capitolo 5 - Conclusioni
+Vengono tratte le conclusioni sul lavoro svolto.
 Quindi viene deciso se ci sono o meno algoritmi oggettivamente migliori di altri oppure se alcuni algoritmi
 sono più indicati di altri rispetto a particolari situazioni (restrizioni sul tempo di esecuzione,
 sul tipo di labirinto generato ecc...).

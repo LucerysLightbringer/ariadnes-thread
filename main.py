@@ -83,7 +83,7 @@ def main():
 
     # MazeGrid, grid_distances e grid_colored non cambiano nulla se non applico le distanze
     # grid_xxx.distances = maze_distances
-    """
+
     img_maze_checkerboard = MazeGrid.to_png(cell_size=cell_size, background_type="checkerboard")
     img_maze_checkerboard.save("maze_checkerboard.png")
     img_maze_checkerboard.show()
@@ -92,7 +92,7 @@ def main():
     img_maze_all_white.save("maze_all_white.png")
     img_maze_all_white.show()
     # ----------------------------------------------- #
-    """
+
 
 
     # ---------------------------------------------------------- #
@@ -115,7 +115,7 @@ def main():
     img_distances_color.show()
     # ----------------------------------------------- #
 
-    """
+
     # Distanze base (colorata con distanze)
     img_distances_distance = MazeGrid.to_png(cell_size,
                                              background_type="plain_white",
@@ -176,7 +176,7 @@ def main():
     img_longest_path_solution.save("maze_longest_path_solution.png")
     img_longest_path_solution.show()
     # ---------------------------------------------------------- #
-    """
+
 
 
 def print_cells(grid):
