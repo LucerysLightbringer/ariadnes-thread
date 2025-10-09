@@ -15,7 +15,7 @@ class RecursiveBacktracker:
         # Scegli cella casuale
         cell = grid.random_cell()
 
-        # Inizializzo stack
+        # Inizializzo stack delle celle da visitare
         stack = []
         stack.append(cell)
 

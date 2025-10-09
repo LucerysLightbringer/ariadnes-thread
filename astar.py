@@ -66,16 +66,16 @@ class AStar:
 
                 # Il costo per raggiungere la cella adiacente attraverso la cella corrente.
                 # Nel nostro caso (labirinto ortogonale), costo unitario.
-                tentative_g_score = g_score[current_cell] + 1
+                current_g_score = g_score[current_cell] + 1
 
 
                 # Se questo percorso per la cella adiacente è più corto
                 # di quello precedente
-                if tentative_g_score < g_score[neighbor]:
+                if current_g_score < g_score[neighbor]:
 
                     # Aggiorno scores della cella adiacente
                     path[neighbor] = current_cell
-                    g_score[neighbor] = tentative_g_score
+                    g_score[neighbor] = current_g_score
                     f_score[neighbor] = g_score[neighbor] + AStar._manhattan_distance(neighbor, goal_cell)
 
                     # Aggiungiamo la cella adiacente alla coda di priorità per esaminarla,

@@ -14,9 +14,9 @@ def main():
 
 
     # ----------------------------------------------- #
-    maze_row = 10
-    maze_col = 10
-    MazeGrid = Grid(maze_row,maze_col)
+    maze_rows = 100
+    maze_columns = 100
+    MazeGrid = Grid(maze_rows,maze_columns)
 
     start_time = time.perf_counter()
     RecursiveDivision.apply(MazeGrid)
@@ -25,7 +25,7 @@ def main():
     # Scelgo arbitrariamente celle root e goal
     root = MazeGrid[0,0]
     goal_cell = MazeGrid.random_cell()
-    #goal_cell = GridVisualize[maze_row-1, maze_col-1]
+    #goal_cell = GridVisualize[maze_rows-1, maze_columns-1]
 
 
     execution_time = end_time - start_time
@@ -129,7 +129,7 @@ def main():
 
     # Risoluzione con A*
     #root = GridVisualize[0, 0]
-    #goal_cell = GridVisualize[maze_row - 1, maze_col - 1]
+    #goal_cell = GridVisualize[maze_rows - 1, maze_columns - 1]
 
     solution_path = AStar.apply(MazeGrid, root, goal_cell)
     if solution_path:
