@@ -207,12 +207,22 @@ class Grid:
                     smooth_exp = 0.5
                     interpolation = max(0.0, min(1.0, intensity ** smooth_exp))
 
-                    color_start = (25, 220, 25) # verde chiaro
-                    color_end = (0, 50, 0)      # verde scuro
+                    color_start = (255, 255, 255)  # bianco
+                    color_middle = (0, 180, 0)   # verde
+                    color_end = (0, 30, 0)         # verde scuro
 
-                    red = int(color_end[0] + (color_start[0] - color_end[0]) * interpolation)
-                    green = int(color_end[1] + (color_start[1] - color_end[1]) * interpolation)
-                    blue = int(color_end[2] + (color_start[2] - color_end[2]) * interpolation)
+                    if interpolation < 0.5:
+                        # Da verde scuro a verde
+                        local_interpolation = interpolation * 2
+                        red = int(color_end[0] + (color_middle[0] - color_end[0]) * local_interpolation)
+                        green = int(color_end[1] + (color_middle[1] - color_end[1]) * local_interpolation)
+                        blue = int(color_end[2] + (color_middle[2] - color_end[2]) * local_interpolation)
+                    else:
+                        # Da verde a bianco
+                        local_interpolation = (interpolation - 0.5) * 2
+                        red = int(color_middle[0] + (color_start[0] - color_middle[0]) * local_interpolation)
+                        green = int(color_middle[1] + (color_start[1] - color_middle[1]) * local_interpolation)
+                        blue = int(color_middle[2] + (color_start[2] - color_middle[2]) * local_interpolation)
 
                     cell_color = (red, green, blue)
             # ------------------------------------- #
