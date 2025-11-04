@@ -1,42 +1,32 @@
 from random import randrange
-from PIL import Image, ImageDraw, ImageFont  # Libreria Pillow per salvare come immagine PNG il labirinto
+from PIL import Image, ImageDraw, ImageFont  # Pillow library for image manipulation functions.
 from cell import Cell
 from distances import Distances
 
 
-# Nessun _	| Pubblico, per uso generale
-# _nome	    | Privato per convenzione (ma posso comunque accederlo)
-# __nome	| Privato con "protezione" da override
-# __nome__	| Metodo speciale (usare solo come override)
-
-
-# Rappresenta una griglia.
-# Definisce una griglia di grandezza (rows x columns).
+# Define a maze as a (rows x columns) grid.
 class Grid:
 
-    # Costruttore:
-    # creo una griglia di dimensione (rows, columns)
-    # creo una serie di celle per ogni posizione della griglia
-    # inizializzo le celle e ogni adiacente di ogni cella
+
+    # Constructor
     def __init__(self, rows, columns):
 
-        # Setto la dimensione della griglia
+        # Size of the grid.
         self.rows = rows
         self.columns = columns
 
-        # Creo griglia vuota
+        # Create an empty grid.
         self._grid = self._create_grid()
 
-        # Setto gli adiacenti di ogni cella
+        # Set the cells of the grid.
         self._configure_cells()
 
-        self._distances = None      # distanze di ogni cella da una root arbitraria
-        self._maxdistance = 0       # distanza massima dalla root
+        self._distances = None      # distances of every cell from the root
+        self._max_distance = 0       # max distance from the root
     # ----------------------------------------------- #
 
 
-    # Creo una nuova cella in ogni singola posizione di (row,column).
-    # Ritorno quindi la matrice.
+    # Create an empty grid.
     def _create_grid(self):
 
         grid = []
@@ -55,7 +45,7 @@ class Grid:
     # ----------------------------------------------- #
 
 
-    # Definisce ogni cella adiacente (neighbor) per ogni cella della griglia.
+    # Define every neighbor cell for every cell of the grid.
     def _configure_cells(self):
 
         for cell in self.each_cell():
@@ -69,30 +59,29 @@ class Grid:
     # ----------------------------------------------- #
 
 
-    # Getter per la proprietà 'distances'.
+    # Getter for the 'distances' property.
     @property
     def distances(self):
         return self._distances
     # ----------------------------------------------- #
 
 
-    # Setter per 'distances'
+    # Setter for the 'distances' property.
     @distances.setter
     def distances(self, distances_obj: Distances):
 
         self._distances = distances_obj
 
-        # Trova la cella più lontana e la sua distanza massima tramite longest_path_to(),
-        # ritorna la cella e la sua distanza.
+        # Find the most distant cell with the function longest_path_from().
         if distances_obj:
-            farthest_cell, self._maxdistance = distances_obj.longest_path_from()
+            farthest_cell, self._max_distance = distances_obj.longest_path_from()
         else:
-            self._maxdistance = 0
+            self._max_distance = 0
     # ----------------------------------------------- #
 
 
-    # Definisco la sintassi [i][j] per poter ottenere una singola cella.
-    # Se la coppia di indici [i][j] è fuori dal range della griglia, ritorno None.
+    # Define the [row][col] syntax to get a single cell.
+    # If the indexes are out of bounds, return None.
     def __getitem__(self, position):
 
         row, column = position
@@ -104,7 +93,26 @@ class Grid:
     # ----------------------------------------------- #
 
 
-    # Ritorna una cella casuale della griglia.
+    # Return the rows of the grid one at a time.
+    def each_row(self):
+        for row in self._grid:
+            yield row
+    # ----------------------------------------------- #
+
+
+    # Return the cells of the grid one at a time.
+    def each_cell(self):
+
+        for row in self.each_row():
+            for cell in row:
+
+                # Return the cell only if it actually exists.
+                if cell:
+                    yield cell
+    # ----------------------------------------------- #
+
+
+    # Return a random cell within the grid.
     def random_cell(self):
 
         row = randrange(self.rows)
@@ -114,42 +122,20 @@ class Grid:
     # ----------------------------------------------- #
 
 
-    # Ritorna la grandezza della griglia.
+    # Return the size of the grid as the total number of cells.
     def size(self):
         return self.rows * self.columns
     # ----------------------------------------------- #
 
 
-    # Ritorna le righe della griglia una alla volta.
-    def each_row(self):
-        for row in self._grid:
-            yield row
-    # ----------------------------------------------- #
-
-
-    # Itero su tutte le celle della griglia e ritorno una cella alla volta.
-    def each_cell(self):
-
-        for row in self.each_row():
-            for cell in row:
-
-                # Se la cella esiste effettivamente, la ritorno
-                if cell:
-                    yield cell
-    # ----------------------------------------------- #
-
-
-
-    # Raggruppa i vicoli ciechi, ovvero le singole celle
-    # che hanno solamente un'altra cella collegata.
+    # Return the set of deadends of the maze.
+    # A dead end is a cell which is linked to only another cell.
     def deadends(self):
 
         deadends = []
 
         for cell in self.each_cell():
 
-            # Controlla se la cella ha esattamente una sola cella collegata
-            # ovvero è un vicolo cieco
             if len(cell.all_linked()) == 1:
                 deadends.append(cell)
 
@@ -157,7 +143,7 @@ class Grid:
     # ----------------------------------------------- #
 
 
-    # Stampa il labirinto
+    #  Print the maze as a PNG image.
     def to_png(self,
                cell_size=10,
                background_type="plain_white",
@@ -165,15 +151,16 @@ class Grid:
                show_solution=False, solution_path=None,
                start_cell=None, end_cell=None):
 
-        # Creo PNG default
+
+        # Create the default PNG image.
         img_width = cell_size * self.columns
         img_height = cell_size * self.rows
         img = Image.new("RGB", (img_width + 1, img_height + 1), "white")
         draw = ImageDraw.Draw(img)
 
-        # Carica i font per le distanze solamente se richiesto
-        if show_distances and distances_obj:
 
+        # Load fonts only if requested (only if the distances must be written on every cell).
+        if show_distances and distances_obj:
             try:
                 font_normal = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=9)
                 font_small = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=8)
@@ -183,54 +170,53 @@ class Grid:
                 current_font = font_default
 
 
-        # Itero ogni cella e ne calcolo il colore
+        # Define the position, size and color of every cell.
         for cell in self.each_cell():
 
-            # Vertice della cella "pixel"
+            # Vertexes of the cell.
             x1 = cell.column * cell_size
             y1 = cell.row * cell_size
             x2 = (cell.column + 1) * cell_size
             y2 = (cell.row + 1) * cell_size
 
-            # Colore cella default
+            # Default cell color.
             cell_color = None
 
-            # Calcola colore della cella in base alla distanza
-            # come un gradiente tra due colori
+            # Define the color of the cell based on the distance (from the root)
+            # as a gradient of three colors.
             if self.distances:
 
                 dist = self.distances[cell]
 
-                if dist is not None and self._maxdistance > 0:
+                if dist is not None and self._max_distance > 0:
 
-                    intensity = (self._maxdistance - dist) / self._maxdistance
+                    intensity = (self._max_distance - dist) / self._max_distance
                     smooth_exp = 0.5
                     interpolation = max(0.0, min(1.0, intensity ** smooth_exp))
 
-                    color_start = (255, 255, 255)  # bianco
-                    color_middle = (0, 180, 0)   # verde
-                    color_end = (0, 30, 0)         # verde scuro
+                    color_start = (255, 255, 255)  # white
+                    color_middle = (0, 180, 0)     # light green
+                    color_end = (0, 30, 0)         # dark green
 
                     if interpolation < 0.5:
-                        # Da verde scuro a verde
+                        # From dark green to light green.
                         local_interpolation = interpolation * 2
                         red = int(color_end[0] + (color_middle[0] - color_end[0]) * local_interpolation)
                         green = int(color_end[1] + (color_middle[1] - color_end[1]) * local_interpolation)
                         blue = int(color_end[2] + (color_middle[2] - color_end[2]) * local_interpolation)
                     else:
-                        # Da verde a bianco
+                        # From light green to white.
                         local_interpolation = (interpolation - 0.5) * 2
                         red = int(color_middle[0] + (color_start[0] - color_middle[0]) * local_interpolation)
                         green = int(color_middle[1] + (color_start[1] - color_middle[1]) * local_interpolation)
                         blue = int(color_middle[2] + (color_start[2] - color_middle[2]) * local_interpolation)
 
                     cell_color = (red, green, blue)
-            # ------------------------------------- #
 
-            # Se non calcolo il colore in base alle distanza,
-            # mi riduco a due opzioni standard
+
+            # If the color is not based on the distances,
+            # then revert to the default types.
             if not cell_color:
-
                 if background_type == "checkerboard":
                     if (cell.row + cell.column) % 2 == 0:
                         cell_color = (255, 255, 255)
@@ -240,13 +226,14 @@ class Grid:
                     cell_color = (255, 255, 255)
 
 
-            # Coloro effettivamente la cella
+            # Effectively coloring the cell.
             if cell_color:
                 draw.rectangle([x1, y1, x2, y2], fill=cell_color)
 
 
-            # Disegna le mura sottili attorno ad ogni cella
-            thin_wall_color = (50, 50, 50) # grigio
+            # Draw thin walls around every cell.
+            # These walls are only drawn to make it easier to distinguish the cells.
+            thin_wall_color = (50, 50, 50) # gray
             thin_wall_width = 1
             draw.line([(x1, y1), (x2, y1)], fill=thin_wall_color, width=thin_wall_width)
             draw.line([(x1, y1), (x1, y2)], fill=thin_wall_color, width=thin_wall_width)
@@ -254,22 +241,24 @@ class Grid:
             draw.line([(x1, y2), (x2, y2)], fill=thin_wall_color, width=thin_wall_width)
 
 
-            # Disegna i numeri delle distanze (se richiesto)
+            # Write the distance on the cell (only if requested).
             if distances_obj and distances_obj[cell] is not None:
 
-                text_color = (240, 50, 255) # viola
-                x = cell.column * cell_size + cell_size // 4
-                y = cell.row * cell_size + cell_size // 4
+                text_color = (240, 50, 255) # purple
+
+                # Center the text.
+                text_position_x = cell.column * cell_size + cell_size // 3
+                text_position_y = cell.row * cell_size + cell_size // 3
 
                 if distances_obj[cell] >= 1000:
                     current_font = font_small
 
-                draw.text((x, y), str(distances_obj[cell]), fill=text_color, font=current_font)
+                draw.text((text_position_x, text_position_y), str(distances_obj[cell]), fill=text_color, font=current_font)
 
 
-        # Disegna le mura effettive che compongono il labirinto
+        # Draw the actual walls that makes the maze.
         thick_wall_width = 3
-        thick_wall_color = (0, 0, 0) # nero
+        thick_wall_color = (0, 0, 0) # black
 
         for cell in self.each_cell():
 
@@ -288,22 +277,22 @@ class Grid:
                 draw.line([(x1, y2), (x2, y2)], width=thick_wall_width, fill=thick_wall_color)
 
 
-        # Disegna il percorso della soluzione (se richiesto)
+        # Draw the solution path (only if requested).
         if show_solution and solution_path:
 
-            # Definisco start_cell e end_cell di default
-            # se non vengono esplicitate
+            # Define the default starting cell (the root of the solution),
+            # and ending cell (the goal cell of the solution).
             if start_cell is None:
                 start_cell = solution_path[0]
 
             if end_cell is None:
                 end_cell = solution_path[-1]
 
-            path_color = (240, 50, 255)  # viola
-            start_color = (255, 200, 0)  # giallo
-            end_color = (0, 255, 255)    # ciano
+            path_color = (240, 50, 255)       # purple
+            start_cell_color = (255, 200, 0)  # yellow
+            end_cell_color = (0, 255, 255)    # cyan
 
-            # Disegna il percorso
+            # Draw the solution path.
             for i in range(len(solution_path) - 1):
 
                 cell1 = solution_path[i]
@@ -317,6 +306,7 @@ class Grid:
                 draw.line((cx1, cy1, cx2, cy2), fill=path_color, width=max(1, cell_size // 10))
 
 
+            # Load the font for the text (S for the root cell, E for the goal cell).
             try:
                 font_big = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=15)
                 current_font = font_big
@@ -324,16 +314,16 @@ class Grid:
                 font_default = ImageFont.load_default()
                 current_font = font_default
 
-            text_color = (240, 50, 255) # viola
+            text_color = (240, 50, 255) # purple
 
             if start_cell:
                 sx1 = start_cell.column * cell_size
                 sy1 = start_cell.row * cell_size
                 sx2 = (start_cell.column + 1) * cell_size
                 sy2 = (start_cell.row + 1) * cell_size
-                draw.rectangle((sx1 + 1, sy1 + 1, sx2 - 1, sy2 - 1), fill=start_color)
-                text_x = start_cell.column * cell_size + cell_size // 5
-                text_y = start_cell.row * cell_size + cell_size // 5
+                draw.rectangle((sx1 + 1, sy1 + 1, sx2 - 1, sy2 - 1), fill=start_cell_color)
+                text_x = start_cell.column * cell_size + cell_size // 3
+                text_y = start_cell.row * cell_size + cell_size // 3
                 draw.text((text_x, text_y), "S", fill=text_color, font=current_font)
 
             if end_cell:
@@ -341,10 +331,10 @@ class Grid:
                 ey1 = end_cell.row * cell_size
                 ex2 = (end_cell.column + 1) * cell_size
                 ey2 = (end_cell.row + 1) * cell_size
-                draw.rectangle((ex1 + 1, ey1 + 1, ex2 - 1, ey2 - 1), fill=end_color)
-                text_x = end_cell.column * cell_size + cell_size // 5
-                text_y = end_cell.row * cell_size + cell_size // 5
+                draw.rectangle((ex1 + 1, ey1 + 1, ex2 - 1, ey2 - 1), fill=end_cell_color)
+                text_x = end_cell.column * cell_size + cell_size // 4
+                text_y = end_cell.row * cell_size + cell_size // 4
                 draw.text((text_x, text_y), "E", fill=text_color, font=current_font)
 
         return img
-        # ------------------------------------------------------------------------------------- #
+    # ----------------------------------------------- #

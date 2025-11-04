@@ -1,40 +1,36 @@
 import random
 
 
-# Algoritmo di generazione Binary Tree.
-# Partendo da una cella casuale, ed iterando per ogni cella della griglia:
-# se la cella ha una adiacente a nord, posso tagliare il muro a nord
-# se la cella ha una adiacente a est, posso tagliare il muro a est
-# scelgo casualmente tra le due opzioni per il taglio
-# ovviamente non taglio sulle celle dei bordi
+# Generative algorithm Binary Tree.
+#
+# Starting from the first cell of the maze ([0][0]),
+# and looping on the grid row by row, choose randomly to cut north or east.
 class BinaryTree:
 
+
+    # The algorithm cuts through the maze creating the corridors.
+    # Cutting means linking a cell to another one.
+    #
+    # - Loop through the grid row by row.
+    #   - Choose randomly to cut towards the north and east neighbors of the current cell.
     @staticmethod
     def apply(grid):
 
-        # Itera su ogni cella
+        # Loop through the grid.
         for cell in grid.each_cell():
 
-            # Definisco array neighbors vuoto
-            # per ogni cella (solamente all'inizio), ovvero
-            # la lista delle celle adiacenti.
-            neighbors = []
+            # Save the available directions to cut towards to.
+            directions = []
 
-            # Se la cella ha una cella adiacente nord
-            # puoi aggiungerla alla lista delle celle adiacenti
             if cell.north:
-                neighbors.append(cell.north)
+                directions.append(cell.north)
 
-            # Se la cella ha una cella adiacente est
-            # puoi aggiungerla alla lista delle celle adiacenti
             if cell.east:
-                neighbors.append(cell.east)
+                directions.append(cell.east)
 
-            # Sono sicuro che posso andare a nord o est.
-            # Scelgo una cella a caso tra le due e mi linko ad essa,
-            # creando un passaggio.
-            if neighbors:
-                neighbor = random.choice(neighbors)
+            # Cut towards the direction chosen randomly.
+            if directions:
+                neighbor = random.choice(directions)
                 cell.link(neighbor)
 
         return grid

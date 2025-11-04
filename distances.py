@@ -1,84 +1,84 @@
-# Classe usata per salvare le distanze di ogni cella da una cella root arbitraria.
+# Class used to save the distances of every cell of the maze starting from a root cell.
 class Distances:
 
-    # La cella arbitraria iniziale è root.
-    # Il costruttore semplicemente inizializza un dizionario (cell,distance)
-    # con distanza dalla root == 0.
+
+    # Constructor
     def __init__(self, root):
 
-        self.root = root
-        self._cells = {root: 0} 
+        # The constructor simply initializes a dictionary
+        # with distance from the root set to 0.
+
+        self.root = root        # arbitrary root cell is explicit
+        self._cells = {root: 0} # a dictionary to save (cell,distance) for every cell
     # ----------------------------------------------- #
 
 
-    # Definisco la sintassi [i] per poter ottenere la distanza di una singola cella dalla root.
-    # [i] = ..., dove ... è la distanza ritornata.
-    # Restituisce None se non esiste.
+    # Define the [index] syntax to get the distance of a single cell from the root.
+    # If the cell doesn't exist, return None.
     def __getitem__(self, cell):
         return self._cells.get(cell)
     # ----------------------------------------------- #
 
 
-    # Definisco la sintassi [i] per poter settare la distanza di una singola cella dalla root.
-    # [i] = k, dove k è la distanza da settare.
+    # Define the [index] syntax to set the distance of a single cell from the root.
     def __setitem__(self, cell, distance):
         self._cells[cell] = distance
     # ----------------------------------------------- #
 
 
-    # Ritorna la lista di tutte le distanze.
-    # Utilizzo @property per poter usare getter e setter su _cells.key()
-    # senza dover fare refactoring di codice precedente.
+    # Return the dictionary as a read-only variable. Ritorna la lista di tutte le distanze.
+    # @property is used to be able to use the getter and setter on _cells.key().
     @property
     def all_cells(self):
-        # restituisce la “vista” delle chiavi; se le vuoi mutabili, fai list(self._cells)
+        # This is only a "view" of the dictionary.
+        # If the distances must be mutable, then return list(self._cells).
         return self._cells.keys()
     # ----------------------------------------------- #
 
 
-    # Utilizzando la matrice delle distanze pre-calcolata,
-    # ricostruisce un cammino minimo per quel percorso (root <-> cell_goal).
+    # Using the distances dictionary, calculate the shortest path
+    # from the root to a specified goal cell.
+    # Return a dictionary (Distances object) with the path.
     def shortest_path_to(self, cell_goal):
 
         current_cell = cell_goal
-        backtrack = Distances(self.root) # calcola distanze dalla root
+        backtrack = Distances(self.root) # get all the distances from the root
         backtrack[current_cell] = self[current_cell]
 
-        # Finché non arrivo alla cella root
+        # While the root cell is not visited.
         while current_cell != self.root:
 
-            # Itero su tutte le celle collegate alla cella corrente
-            for neighbor in current_cell.all_linked():
+            # Get all the cells linked to the current cell,
+            # meaning all the cells for which the current cell has a path to.
+            for linked_cell in current_cell.all_linked():
 
-                # Se una cella collegata ha distanza minore della cella corrente
-                # è quella da cui si è arrivati
-                if self[neighbor] < self[current_cell]:
+                # If a linked cell has a shorter distance than the current cell,
+                # the linked cell is the one from which the path came.
+                if self[linked_cell] < self[current_cell]:
 
-                    # Rendo la cella corrente quella con distanza minore (neighbor),
-                    # esco dal ciclo e ricomincio con la nuova cella corrente
-                    backtrack[neighbor] = self[neighbor]
-                    current_cell = neighbor
+                    # The linked cell is now the new current cell,
+                    # exit this iteration and continue with the new current cell.
+                    backtrack[linked_cell] = self[linked_cell]
+                    current_cell = linked_cell
                     break
 
-        return backtrack # dizionario (cell,distance)
+        return backtrack
     # ----------------------------------------------- #
 
 
-    # Calcola la cella con distanza massima dalla root.
+    # Calculate the cell with the farthest distance from the root.
+    # Return a couple (cell,distance).
     def longest_path_from(self):
 
         max_distance = 0
-        max_cell = self.root  # inizializza con la root, in caso non ci siano altre celle
+        max_cell = self.root  # start from the root
 
-        # Itera sul dizionario _cells che contiene (cella: distanza)
+        # Loop through the Distances dictionary.
         for cell, dist in self._cells.items():
 
             if dist > max_distance:
                 max_cell = cell
                 max_distance = dist
 
-        return max_cell, max_distance # ritorna coppia (cell,distance)
+        return max_cell, max_distance
     # ----------------------------------------------- #
-    
-    
-    

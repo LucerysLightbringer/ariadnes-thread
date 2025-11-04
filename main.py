@@ -14,160 +14,165 @@ def main():
 
 
     # ----------------------------------------------- #
-    maze_rows = 50
-    maze_columns = 50
+    # Set the grid parameters and create the maze.
+    maze_rows = 20
+    maze_columns = 20
     MazeGrid = Grid(maze_rows,maze_columns)
 
     start_time = time.perf_counter()
-    RecursiveDivision.apply(MazeGrid)
-    end_time = time.perf_counter()
-
-    # Scelgo arbitrariamente celle root e goal
-    root = MazeGrid[0,0]
-    goal_cell = MazeGrid.random_cell()
-    #goal_cell = GridVisualize[maze_rows-1, maze_columns-1]
-
-
-    execution_time = end_time - start_time
-    if execution_time >= 60:
-        print(f"Labirinto generato con {MazeGrid.size()} celle ({MazeGrid.rows} x {MazeGrid.columns}) in : [ {(execution_time / 60):.3f}m | {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
-    else:
-        print(f"Labirinto generato con {MazeGrid.size()} celle ({MazeGrid.rows} x {MazeGrid.columns}) in : [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
-    # ----------------------------------------------- #
-
-
-
-    # ----------------------------------------------- #
-    # Calcolo distanze: tutte le distanze da root
-    start_time = time.perf_counter()
-    maze_distances = root.calc_all_distances()
+    RecursiveBacktracker.apply(MazeGrid)
     end_time = time.perf_counter()
 
     execution_time = end_time - start_time
+
     if execution_time >= 60:
-        print(f"Calcolo distanze dalla root {root} in: [ {(execution_time/60):.3f}m | {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
+        print(f"Maze generated with {MazeGrid.size()} cells ({MazeGrid.rows} x {MazeGrid.columns}) in : [ {(execution_time / 60):.3f}m | {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
     else:
-        print(f"Calcolo distanze dalla root {root} in: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
+        print(f"Maze generated with {MazeGrid.size()} cells ({MazeGrid.rows} x {MazeGrid.columns}) in : [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
     # ----------------------------------------------- #
 
 
+    # Choose arbitrarily the root cell and the goal cell.
+    root_cell = MazeGrid[0,0]
+    goal_cell = MazeGrid[maze_rows - 1, maze_columns - 1]
+
 
     # ----------------------------------------------- #
-    # Calcolo percorso più lungo dalla radice.
+    # Calculate all the distances from the root cell.
     start_time = time.perf_counter()
+    maze_distances = root_cell.calc_all_distances()
+    end_time = time.perf_counter()
+
+    execution_time = end_time - start_time
+
+    if execution_time >= 60:
+        print(f"Distances from the root {root_cell} calculated in: [ {(execution_time/60):.3f}m | {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
+    else:
+        print(f"Distances from the root {root_cell} calculated in: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
+    # ----------------------------------------------- #
+
+
+    # ----------------------------------------------- #
+    # Calculate the longest path from the root.
+    start_time = time.perf_counter()
+
+    # Calculate the farthest cell from the root, making it the new root.
     longest_path_root, _ = maze_distances.longest_path_from()
+
+    # Calculate all the distances from the new root (the farthest cell from the original root).
     distances_from_longest_path_root = longest_path_root.calc_all_distances()
 
-    # Calcolo percorso più lungo dalla nuova radice
+    # Calculate the farthest cell from the root.
     longest_path_goal, max_dist_longest_path = distances_from_longest_path_root.longest_path_from()
 
-    # Calcolo il percorso più corto tra le due celle
+    # Calculate the shortest path between the root and the farthest cell from the root.
     longest_path_distances = distances_from_longest_path_root.shortest_path_to(longest_path_goal)
+
     end_time = time.perf_counter()
 
     execution_time = end_time - start_time
+
     if execution_time >= 60:
-        print(f"Calcolo del percorso più lungo nel labirinto: da {longest_path_root} a {longest_path_goal} con distanza {max_dist_longest_path} in: [ {(execution_time/60):.3f}s | {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
+        print(f"Longest path in the maze: from {longest_path_root} to {longest_path_goal} with distance {max_dist_longest_path} in: [ {(execution_time/60):.3f}s | {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
     else:
-        print(f"Calcolo del percorso più lungo nel labirinto: da {longest_path_root} a {longest_path_goal} con distanza {max_dist_longest_path} in: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
+        print(f"Longest path in the maze: from {longest_path_root} to {longest_path_goal} with distance {max_dist_longest_path} in: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]\n")
     # ----------------------------------------------- #
 
 
-
     # ----------------------------------------------- #
-    # Un valore di 2 o 3 pixel è spesso sufficiente per cell_size=20
-    #cell_inset = 6
-    #cell_size = 22
-    cell_inset = 7
+    # Solving the maze with the A* algorithm.
+
+    start_time = time.perf_counter()
+
+    solution_path = AStar.apply(MazeGrid, root_cell, goal_cell)
+
+    end_time = time.perf_counter()
+    execution_time = end_time - start_time
+
+    if solution_path:
+        print(f"Solution path found with A*: {len(solution_path)} cells in: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ] \n")
+    else:
+        print("No solution path found. \n")
+    # ----------------------------------------------- #
+
+
+    # -------------------------------------------------------------------- #
     cell_size = 30
 
-    # MazeGrid, grid_distances e grid_colored non cambiano nulla se non applico le distanze
-    # grid_xxx.distances = maze_distances
-
-    img_maze_checkerboard = MazeGrid.to_png(cell_size=cell_size, background_type="checkerboard")
+    # Generate a PNG image of the maze with the cells colored like a checkerboard.
+    img_maze_checkerboard = MazeGrid.to_png(cell_size=cell_size, background_type="checkerboard", show_distances=False)
     img_maze_checkerboard.save("maze_checkerboard.png")
     img_maze_checkerboard.show()
 
-    img_maze_all_white = MazeGrid.to_png(cell_size=cell_size, background_type="plain_white")
+    # Generate a PNG image of the maze with all the cells colored white.
+    img_maze_all_white = MazeGrid.to_png(cell_size=cell_size, background_type="plain_white", show_distances=False)
     img_maze_all_white.save("maze_all_white.png")
     img_maze_all_white.show()
-    # ----------------------------------------------- #
 
 
+    # -------------------------------------------------------------------- #
 
-    # ---------------------------------------------------------- #
-    # Applicazione Distanze
+
+    # Apply distances to the maze.
     start_time = time.perf_counter()
 
     MazeGrid.distances = maze_distances
 
     end_time = time.perf_counter()
     execution_time = end_time - start_time
-    print(f"Applicazione distanze su griglia: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ]")
-    # ----------------------------------------------- #
+
+    print(f"Applied distances on the grid in: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ] \n")
 
 
-    # Distanze base (colorata, senza distanze)
+    # Generate a PNG image of the maze with the cells colored based on the distances from the root.
     img_distances_color = MazeGrid.to_png(cell_size,
                                           background_type="plain_white",
                                           show_distances=False)
     img_distances_color.save("maze_distances_color.png")
     img_distances_color.show()
-    # ----------------------------------------------- #
 
-
-    # Distanze base (colorata con distanze)
-    img_distances_distance = MazeGrid.to_png(cell_size,
+    # Generate a PNG image of the maze with the cells colored based on the distances from the root
+    # and the distance of every cell is written above it.
+    img_distances_color_and_text = MazeGrid.to_png(cell_size,
                                              background_type="plain_white",
-                                             show_distances=True,
-                                             distances_obj=maze_distances)
-    img_distances_distance.save("maze_distances_distance.png")
-    img_distances_distance.show()
-    # ----------------------------------------------- #
-    
+                                             show_distances=True, distances_obj=maze_distances)
+    img_distances_color_and_text.save("maze_distances_color_and_text.png")
+    img_distances_color_and_text.show()
 
-    
-    # Risoluzione con A*
-    #root = GridVisualize[0, 0]
-    #goal_cell = GridVisualize[maze_rows - 1, maze_columns - 1]
 
-    solution_path = AStar.apply(MazeGrid, root, goal_cell)
-    if solution_path:
-        print(f"Percorso trovato con A*: {len(solution_path)} celle.")
-    else:
-        print("Nessun percorso trovato.")
+    # -------------------------------------------------------------------- #
 
+
+    # Generate a PNG image of the maze with the solution path highlighted.
     img_solution_path_astar = MazeGrid.to_png(cell_size,
                                               background_type="plain_white",
                                               show_solution=True, solution_path=solution_path,
-                                              start_cell = root, end_cell = goal_cell)
+                                              start_cell=root_cell, end_cell=goal_cell)
     img_solution_path_astar.save("maze_solution_astar.png")
     img_solution_path_astar.show()
-    # ----------------------------------------------- #
 
 
+    # -------------------------------------------------------------------- #
 
-    # ---------------------------------------------------------- #
-    # Percorso più lungo (colorato senza distanze)
+
+    # Generate a PNG image of the maze with the longest path in the maze highlighted.
     MazeGrid.distances = longest_path_distances
-    img_longest_path_default = MazeGrid.to_png(cell_size,
+    img_longest_path_color = MazeGrid.to_png(cell_size,
                                                background_type="plain_white",
                                                show_distances=False)
-    img_longest_path_default.save("maze_longest_path_color.png")
-    img_longest_path_default.show()
+    img_longest_path_color.save("maze_longest_path_color.png")
+    img_longest_path_color.show()
 
-
-    # Percorso più lungo (colorato con distanze)
+    # Generate a PNG image of the maze with the longest path in the maze highlighted,
+    # and also all the other cells are colored.
     img_longest_path_distances = MazeGrid.to_png(cell_size,
                                                  background_type="plain_white",
-                                                 show_distances=True,
-                                                 distances_obj=longest_path_distances)
+                                                 show_distances=True, distances_obj=longest_path_distances)
     img_longest_path_distances.save("maze_longest_path_distance.png")
     img_longest_path_distances.show()
 
-
+    # Generate a PNG image of the maze with the longest path in the maze highlighted.
     longest_path = AStar.apply(MazeGrid, longest_path_root, longest_path_goal)
-    # Percorso più lungo (colorato con percorso)
     img_longest_path_solution = MazeGrid.to_png(cell_size,
                                                 background_type="plain_white",
                                                 show_distances=False,
@@ -178,36 +183,38 @@ def main():
     # ---------------------------------------------------------- #
 
 
-
+# Print which cells are linked to every cell.
 def print_cells(grid):
     for cell in grid.each_cell():
         print(cell, "linked to:", list(cell._links))
 
 
-# Copia i collegamenti del labirinto (links) dalla griglia source a quella di target.
-# Assume che entrambe le griglie abbiano le stesse dimensioni.
+# Copy the source maze to a target maze.
+# The mazes must be of the same size.
 def copy_maze_structure(source_grid: Grid, target_grid: Grid):
+
+    if source_grid.rows != target_grid.rows or source_grid.columns != target_grid.columns:
+        print(f"The mazes are not of the same size. Copy impossible to perform.")
 
     for row in range(source_grid.rows):
         for col in range(source_grid.columns):
 
             source_cell = source_grid[row, col]
-            target_cell = target_grid[row, col]  # Ottieni la cella corrispondente nella griglia di destinazione
+            target_cell = target_grid[row, col]  # get the corresponding cell in the target grid
 
-            # Per ogni cella a cui 'source_cell' è collegata nella griglia sorgente
+            # For every cell to which the source cell is linked in the source maze.
             for linked_source_cell in source_cell.all_linked():
 
-                # Ottieni la cella collegata corrispondente nella griglia di destinazione
+                # Get the corresponding linked cell in the target grid.
                 target_linked_cell = target_grid[linked_source_cell.row, linked_source_cell.column]
 
-                # Collega la cella di destinazione alla sua cella collegata corrispondente.
-                # Il metodo 'link' gestisce la bidirezionalità, quindi basta chiamarlo una volta per coppia.
-                # Controlla se il link esiste già per evitare collegamenti ridondanti.
+                # Link the target cell to the target linked cell.
+                # Check if the cells are already linked (not actually necessary!).
                 if not target_cell.is_linked(target_linked_cell):
                     target_cell.link(target_linked_cell)
 
 
 
-# Eseguo il seguente file come main dell'applicazione.
+# Execute this file as the main entry point of the application.
 if __name__ == "__main__":
     main()
