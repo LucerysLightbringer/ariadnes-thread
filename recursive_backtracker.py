@@ -1,48 +1,50 @@
 import random
 
 
-# Algoritmo di generazione dei labirinti Recursive Backtracker,
-# funziona analogamente a Depth-First Search ma in modo randomizzato.
-# Costruisce il labirinto "scavando" percorsi da una cella all'altra.
-# Sceglie una cella casuale iniziale, cerca tra le celle adiacenti e collega quelle
-# non visitate. Quando non ci sono celle adiacenti non visitate, l'algoritmo torna indietro
-# lungo il percorso fino a trovare una cella con vicini non visitati.
+# Generative algorithm Recursive Backtracker.
+#
+# Choose a random cell, explore the unvisited cells among the neighbors.
+# If no more unvisited neighbors cells are available, the algorithm
+# backtracks the path and finds a new cell with unvisited neighbors.
 class RecursiveBacktracker:
 
+
+    # The algorithm cuts through the maze creating the corridors.
+    # Cutting means linking a cell to another one.
+    #
+    # - Choose a random cell.
+    # - Initialize the stack of cells to be visited and add the first cell.
+    # - Loop through the stack of visited cells, and for every cell visit its neighbors
+    #   that are still not linked to the current cell.
+    #   - If there are no more neighbor cells still not linked,
+    #     remove the current cell from the stack of the visited cells.
+    #   - Else choose randomly a neighbor cell, link the current cell to the neighbor cell
+    #     and add the neighbor cell to the stack of the visited cells.
     @staticmethod
     def apply(grid):
 
-        # Scegli cella casuale
         cell = grid.random_cell()
 
-        # Inizializzo stack delle celle da visitare
-        stack = []
-        stack.append(cell)
+        visited_cells = []
+        visited_cells.append(cell)
 
-        while stack:
+        # Loop through the visited cells and visit their neighbors.
+        # Get the last cell on the stack (without removing it).
+        while visited_cells:
 
-            # Ottieni l'ultima cella nello stack senza rimuoverla
-            current_cell = stack[-1]
+            current_cell = visited_cells[-1]
 
-            # Cerca le celle adiacenti non ancora collegate
+            # Look for neighbors cells still not linked with the current one.
             unlinked_neighbors = [
                 neighbor for neighbor in current_cell.all_neighbors()
                 if not neighbor.all_linked()
             ]
 
-            # Se non ci sono celle adiacenti non collegate,
-            # rimuovi la cella in cima allo stack,
-            # ovvero la cella corrente
             if not unlinked_neighbors:
-                stack.pop()
+                visited_cells.pop()
             else:
-                # Scelgo casualmente una cella adiacente
                 cell_neighbor = random.choice(unlinked_neighbors)
-
-                # Collego la cella corrente alla cella adiacente scelta
                 current_cell.link(cell_neighbor)
-
-                # Inserisco nello stack la cella adiacente
-                stack.append(cell_neighbor)
+                visited_cells.append(cell_neighbor)
 
         return grid

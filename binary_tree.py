@@ -34,3 +34,4 @@ class BinaryTree:
                 cell.link(neighbor)
 
         return grid
+    # ----------------------------------------------- #
