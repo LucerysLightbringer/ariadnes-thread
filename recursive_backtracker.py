@@ -23,10 +23,10 @@ class RecursiveBacktracker:
     @staticmethod
     def apply(grid):
 
-        cell = grid.random_cell()
+        starting_cell = grid.random_cell()
 
         visited_cells = []
-        visited_cells.append(cell)
+        visited_cells.append(starting_cell)
 
         # Loop through the visited cells and visit their neighbors.
         # Get the last cell on the stack (without removing it).
@@ -40,11 +40,13 @@ class RecursiveBacktracker:
                 if not neighbor.all_linked()
             ]
 
+            # No more neighbor cells still not linked.
             if not unlinked_neighbors:
                 visited_cells.pop()
             else:
-                cell_neighbor = random.choice(unlinked_neighbors)
-                current_cell.link(cell_neighbor)
-                visited_cells.append(cell_neighbor)
+                neighbor_cell = random.choice(unlinked_neighbors)
+                current_cell.link(neighbor_cell)
+                visited_cells.append(neighbor_cell)
 
         return grid
+    # ----------------------------------------------- #
