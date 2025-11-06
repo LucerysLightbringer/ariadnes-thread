@@ -98,88 +98,117 @@ def main():
 
     # -------------------------------------------------------------------- #
     cell_size = 30
+    full_color = (255,255,255)               # white
+    checkerboard_color_1 = (255, 255, 255)   # white
+    checkerboard_color_2 = (220, 220, 220)   # gray
+    text_color = (240, 50, 255)              # purple
+    path_color = (240, 50, 255)              # purple
+    gradient_start = (235, 235, 235)         # gray
+    gradient_middle = (0, 180, 0)            # light green
+    gradient_end = (0, 30, 0)                # dark green
+    smooth_exp = 0.65
+    start_cell_color = (255,200,0)           # yellow
+    end_cell_color = (0,255,255)             # cyan
+    deadend_color = (255,0,0)                # red
+
 
     # Generate a PNG image of the maze with the cells colored like a checkerboard.
-    img_maze_checkerboard = MazeGrid.to_png(cell_size=cell_size, background_type="checkerboard", show_distances=False)
-    img_maze_checkerboard.save("maze_checkerboard.png")
-    img_maze_checkerboard.show()
+    img_maze = MazeGrid.to_png(
+        cell_size=cell_size,
+        background_type="checkerboard")
+    img_maze.save("images/checkerboard.png")
+    img_maze.show()
 
-    # Generate a PNG image of the maze with all the cells colored white.
-    img_maze_all_white = MazeGrid.to_png(cell_size=cell_size, background_type="plain_white", show_distances=False)
-    img_maze_all_white.save("maze_all_white.png")
-    img_maze_all_white.show()
+    # Generate a PNG image of the maze with all the cells colored the same color.
+    img_maze = MazeGrid.to_png(
+        cell_size=cell_size,
+        background_type="full_color")
+    img_maze.save("images/full_color.png")
+    img_maze.show()
 
 
     # -------------------------------------------------------------------- #
 
-
-    # Apply distances to the maze.
-    start_time = time.perf_counter()
-
     MazeGrid.distances = maze_distances
 
-    end_time = time.perf_counter()
-    execution_time = end_time - start_time
-
-    print(f"Applied distances on the grid in: [ {execution_time:.3f}s | {(execution_time * 1000):.3f}ms ] \n")
-
-
     # Generate a PNG image of the maze with the cells colored based on the distances from the root.
-    img_distances_color = MazeGrid.to_png(cell_size,
-                                          background_type="plain_white",
-                                          show_distances=False)
-    img_distances_color.save("maze_distances_color.png")
-    img_distances_color.show()
+    img_maze = MazeGrid.to_png(
+        cell_size,
+        show_distances_gradient=True, distances_obj=maze_distances)
+    img_maze.save("images/distances_gradient.png")
+    img_maze.show()
+
 
     # Generate a PNG image of the maze with the cells colored based on the distances from the root
     # and the distance of every cell is written above it.
-    img_distances_color_and_text = MazeGrid.to_png(cell_size,
-                                             background_type="plain_white",
-                                             show_distances=True, distances_obj=maze_distances)
-    img_distances_color_and_text.save("maze_distances_color_and_text.png")
-    img_distances_color_and_text.show()
+    img_maze = MazeGrid.to_png(
+        cell_size,
+        show_distances_gradient=True, distances_obj=maze_distances, show_distance_text=True)
+    img_maze.save("images/distances_gradient_and_text.png")
+    img_maze.show()
 
 
     # -------------------------------------------------------------------- #
 
 
     # Generate a PNG image of the maze with the solution path highlighted.
-    img_solution_path_astar = MazeGrid.to_png(cell_size,
-                                              background_type="plain_white",
-                                              show_solution=True, solution_path=solution_path,
-                                              start_cell=root_cell, end_cell=goal_cell)
-    img_solution_path_astar.save("maze_solution_astar.png")
-    img_solution_path_astar.show()
+    img_maze = MazeGrid.to_png(
+        cell_size,
+        #background_type="checkerboard",
+        show_solution=True, solution_path=solution_path,
+        start_cell=solution_path[0], end_cell=solution_path[-1])
+    img_maze.save("images/solution_astar.png")
+    img_maze.show()
+
+
+    # Generate a PNG image of the maze with the solution path and the cells colored based on the distances.
+    img_maze = MazeGrid.to_png(
+        cell_size,
+        distances_obj=maze_distances,
+        show_subset_gradient=True, subset_cells=solution_path)
+    img_maze.save("images/solution_astar_gradient.png")
+    img_maze.show()
+
+
+    # Generate a PNG image of the maze with the solution and the cells colored based on the distances,
+    # and the distance of every cell is written above it.
+    img_maze = MazeGrid.to_png(
+        cell_size,
+        show_distance_text=True, distances_obj=maze_distances,
+        show_subset_gradient=True, subset_cells=solution_path)
+    img_maze.save("images/solution_astar_gradient_and_text.png")
+    img_maze.show()
 
 
     # -------------------------------------------------------------------- #
 
 
-    # Generate a PNG image of the maze with the longest path in the maze highlighted.
-    MazeGrid.distances = longest_path_distances
-    img_longest_path_color = MazeGrid.to_png(cell_size,
-                                               background_type="plain_white",
-                                               show_distances=False)
-    img_longest_path_color.save("maze_longest_path_color.png")
-    img_longest_path_color.show()
+    # Generate a PNG image of the maze with the longest path in the maze highlighted as a gradient.
+    img_maze = MazeGrid.to_png(
+        cell_size,
+        show_distances_gradient=True, distances_obj=longest_path_distances)
+    img_maze.save("images/longest_path_gradient.png")
+    img_maze.show()
 
-    # Generate a PNG image of the maze with the longest path in the maze highlighted,
-    # and also all the other cells are colored.
-    img_longest_path_distances = MazeGrid.to_png(cell_size,
-                                                 background_type="plain_white",
-                                                 show_distances=True, distances_obj=longest_path_distances)
-    img_longest_path_distances.save("maze_longest_path_distance.png")
-    img_longest_path_distances.show()
+
+    # Generate a PNG image of the maze with the longest path in the maze highlighted as a gradient
+    # and the distance of every cell of the path is written above it.
+    img_maze = MazeGrid.to_png(
+        cell_size,
+        show_distances_gradient=True, distances_obj=longest_path_distances, show_distance_text=True)
+    img_maze.save("images/longest_path_gradient_and_text.png")
+    img_maze.show()
+
 
     # Generate a PNG image of the maze with the longest path in the maze highlighted.
     longest_path = AStar.apply(MazeGrid, longest_path_root, longest_path_goal)
-    img_longest_path_solution = MazeGrid.to_png(cell_size,
-                                                background_type="plain_white",
-                                                show_distances=False,
-                                                show_solution=True, solution_path=longest_path,
-                                                start_cell = longest_path_root, end_cell = longest_path_goal)
-    img_longest_path_solution.save("maze_longest_path_solution.png")
-    img_longest_path_solution.show()
+    img_maze = MazeGrid.to_png(
+        cell_size,
+        #background_type="checkerboard",
+        show_solution=True, solution_path=longest_path,
+        start_cell=longest_path[0], end_cell=longest_path[-1])
+    img_maze.save("images/longest_path_solution.png")
+    img_maze.show()
     # ---------------------------------------------------------- #
 
 
