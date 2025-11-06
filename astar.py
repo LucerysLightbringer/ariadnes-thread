@@ -2,12 +2,9 @@ import heapq  # priority queue (min-heap)
 
 
 # Resolutive algorithm A*.
-#
-#
 class AStar:
 
 
-    #
     @staticmethod
     def apply(grid, root, goal_cell):
 
