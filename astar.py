@@ -14,10 +14,9 @@ class AStar:
 
         # Priority queue of the cells to be explored.
         # Cells with lower f_score (F(n)) have a higher priority.
-        visited_cells = []
-
         # The tuples inserted in the heap are as follows: (f_score, tie_breaker, cell).
         # The starting cell is inserted and the tie-breaker value is increased for the next tuple.
+        visited_cells = []
         heapq.heappush(visited_cells, (AStar._manhattan_distance(root, goal_cell), tie_breaker, root))
         tie_breaker += 1
 
