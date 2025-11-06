@@ -14,11 +14,11 @@ class AStar:
 
         # Priority queue of the cells to be explored.
         # Cells with lower f_score (F(n)) have a higher priority.
-        open_set = []
+        visited_cells = []
 
         # The tuples inserted in the heap are as follows: (f_score, tie_breaker, cell).
         # The starting cell is inserted and the tie-breaker value is increased for the next tuple.
-        heapq.heappush(open_set, (AStar._manhattan_distance(root, goal_cell), tie_breaker, root))
+        heapq.heappush(visited_cells, (AStar._manhattan_distance(root, goal_cell), tie_breaker, root))
         tie_breaker += 1
 
         # Dictionary (cell, parent cell) to save the solution path.
@@ -40,13 +40,13 @@ class AStar:
 
 
         # Loop through the priority queue of the cells to be explored.
-        while open_set:
+        while visited_cells:
 
             # Get the cell with the lowest f_score.
             # If there are more than one cell with the lowest f_score, then the cell
             # with the lowest tie_breaker (the first inserted among them) is extracted.
             # The tie_breaker value is not used, we only need the current_f_score and the current_cell.
-            current_f_score, _, current_cell = heapq.heappop(open_set)
+            current_f_score, _, current_cell = heapq.heappop(visited_cells)
 
             # If the current cell is the goal cell,
             # then the solution path is reconstructed.
@@ -84,7 +84,7 @@ class AStar:
 
                     # Add the linked cell to the priority queue for future exploration
                     # of the maze starting from it.
-                    heapq.heappush(open_set, (f_score[neighbor], tie_breaker, neighbor))
+                    heapq.heappush(visited_cells, (f_score[neighbor], tie_breaker, neighbor))
                     tie_breaker += 1  # increase the tie-breaker for the next tuple.
 
         # If the while loop finishes and the goal cell is not reached,
