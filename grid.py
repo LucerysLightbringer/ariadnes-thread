@@ -22,7 +22,7 @@ class Grid:
         self._configure_cells()
 
         self._distances = None      # distances of every cell from the root
-        self._max_distance = 0       # max distance from the root
+        self._max_distance = 0      # max distance from the root
     # ----------------------------------------------- #
 
 

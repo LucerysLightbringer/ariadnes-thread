@@ -1,55 +1,61 @@
-import heapq  # coda di priorità (min-heap)
+import heapq  # priority queue (min-heap)
 
 
+# Resolutive algorithm A*.
+#
+#
 class AStar:
 
 
-    @staticmethod
-    def _manhattan_distance(cell1, cell2):
-        return abs(cell1.row - cell2.row) + abs(cell1.column - cell2.column)
-
+    #
     @staticmethod
     def apply(grid, root, goal_cell):
 
-        # Contatore tie breaker per evitare conflitti con coda di priorità
-        tie_breaker_counter = 0
+        # Tie-breaker counter to avoid conflicts in the priority queue
+        # for the same f_score value.
+        tie_breaker = 0
 
-        # Coda di priorità che contiene le celle da esplorare.
-        # Le celle con f_score più basso hanno priorità più alta.
+        # Priority queue of the cells to be explored.
+        # Cells with lower f_score (F(n)) have a higher priority.
         open_set = []
 
-        # La tupla inserita nell'heap è (f_score, tie_breaker_counter, cell).
-        # tie_breaker_counter agisce come tie-breaker per due valori f_score uguali.
-        # Inseriamo la cella di partenza (root).
-        heapq.heappush(open_set, (AStar._manhattan_distance(root, goal_cell), tie_breaker_counter, root))
-        tie_breaker_counter += 1  # Incrementa il contatore per il prossimo inserimento.
+        # The tuples inserted in the heap are as follows: (f_score, tie_breaker, cell).
+        # The starting cell is inserted and the tie-breaker value is increased for the next tuple.
+        heapq.heappush(open_set, (AStar._manhattan_distance(root, goal_cell), tie_breaker, root))
+        tie_breaker += 1
 
-        # Dizionario per ricostruire il percorso
+        # Dictionary (cell, parent cell) to save the solution path.
         path = {}
 
-        # g_score è il costo del percorso dalla cella di partenza alla cella corrente.
-        # Inizializziamo tutti i costi a infinito.
+        # Dictionary (cell, cost to reach it).
+        # g_score is the cost of path from the starting cell to the current cell.
+        # Initialize all costs to infinite.
+        # The cost to reach the starting cell from itself is 0.
         g_score = {cell: float('inf') for cell in grid.each_cell()}
-        g_score[root] = 0 # costo per raggiungere la partenza da sé stessa è 0.
+        g_score[root] = 0
 
-        # f_score è il costo totale stimato f(n) = g(n) + h(n)
-        # Inizializziamo tutti i costi a infinito.
+        # Dictionary (cell, cost to reach it).
+        # f_score is the estimated total cost of the path: F(n) = g(n) + h(n).
+        # Initialize all costs to infinite.
+        # Calculate the f_score of the starting cell.
         f_score = {cell: float('inf') for cell in grid.each_cell()}
         f_score[root] = AStar._manhattan_distance(root, goal_cell)
 
 
-        # Finché ci sono celle da esplorare
+        # Loop through the priority queue of the cells to be explored.
         while open_set:
 
-            # Estrae dalla coda la cella con l'f_score più basso.
-            # Con tie-breaker, se due cell hanno lo stesso f_score, viene estratta quella inserita prima.
-            # (Il contatore viene ignorato usando '_' perché serve solo per l'ordinamento nell'heap)
+            # Get the cell with the lowest f_score.
+            # If there are more than one cell with the lowest f_score, then the cell
+            # with the lowest tie_breaker (the first inserted among them) is extracted.
+            # The tie_breaker value is not used, we only need the current_f_score and the current_cell.
             current_f_score, _, current_cell = heapq.heappop(open_set)
 
-            # Se la cella attuale è la cella obiettivo, abbiamo trovato il percorso
+            # If the current cell is the goal cell,
+            # then the solution path is reconstructed.
             if current_cell == goal_cell:
 
-                # Ricostruiamo il percorso ripercorrendolo al contrario
+                # Reconstruct the path from the end to the start.
                 solution_path = []
                 temp = goal_cell
 
@@ -58,30 +64,40 @@ class AStar:
                     temp = path[temp]
 
                 solution_path.append(root)
-                return solution_path[::-1] # inverto il percorso
+                return solution_path[::-1] # reverse the path.
 
-            # Se la cella attuale non è la cella obiettivo,
-            # visito le celle collegate a quella attuale
+
+            # Else, if the current cell is not the goal cell,
+            # visit the cells linked to the current one.
             for neighbor in current_cell.all_linked():
 
-                # Il costo per raggiungere la cella adiacente attraverso la cella corrente.
-                # Nel nostro caso (labirinto ortogonale), costo unitario.
+                # The cost to reach the linked cell passing through the current cell.
+                # The types of mazes generated only allow for unitary costs.
                 current_g_score = g_score[current_cell] + 1
 
-
-                # Se questo percorso per la cella adiacente è più corto
-                # di quello precedente
+                # If the current path for the linked cell is shorter
+                # than the previous path, update the costs of the linked cell
+                # and add the linked cell to the priority queue.
                 if current_g_score < g_score[neighbor]:
 
-                    # Aggiorno scores della cella adiacente
+                    # Update the parent cell and the costs of the linked cell.
                     path[neighbor] = current_cell
                     g_score[neighbor] = current_g_score
                     f_score[neighbor] = g_score[neighbor] + AStar._manhattan_distance(neighbor, goal_cell)
 
-                    # Aggiungiamo la cella adiacente alla coda di priorità per esaminarla,
-                    # usando il nuovo f_score e il contatore come tie-breaker.
-                    heapq.heappush(open_set, (f_score[neighbor], tie_breaker_counter, neighbor))
-                    tie_breaker_counter += 1  # Incrementa il contatore dopo ogni push
+                    # Add the linked cell to the priority queue for future exploration
+                    # of the maze starting from it.
+                    heapq.heappush(open_set, (f_score[neighbor], tie_breaker, neighbor))
+                    tie_breaker += 1  # increase the tie-breaker for the next tuple.
 
-        # Se il ciclo finisce e non abbiamo raggiunto la goal cell, non esiste il percorso
+        # If the while loop finishes and the goal cell is not reached,
+        # no solution path exists.
         return []
+    # ----------------------------------------------- #
+
+
+    # Internal method for Manhattan distance.
+    @staticmethod
+    def _manhattan_distance(cell1, cell2):
+        return abs(cell1.row - cell2.row) + abs(cell1.column - cell2.column)
+    # ----------------------------------------------- #
