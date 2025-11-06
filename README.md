@@ -31,3 +31,32 @@ sul tipo di labirinto generato ecc...).
 Infine vengono discussi eventuali miglioramenti al progetto, come l'implementazione di algoritmi per la generazione
 di labirinti di struttura diversa, oppure metodi di visualizzazione di altre caratteristiche/proprietà
 rispetto ai soli percorsi e distanze.
+
+
+<br>
+
+
+# Bibliography
+
+The sources that contributed the most to the development of this project are the following:
+
+- **Jamis Buck** [(GitHub)](https://github.com/jamis): 
+ - - (Book) [Mazes for Programmers: Code your Own Twisty Little Passages](http://www.mazesforprogrammers.com/)
+ - - (Website) [The Buckblog](http://weblog.jamisbuck.org/)
+ - - (Website) [Maze generation algorithms recap](https://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap.html)
+
+
+- **Walter D. Pullen**:
+ - - (Website) [Astrolog: Maze classification](https://www.astrolog.org/labyrnth/algrithm.htm)
+ - - (Website) [Astrolog: Maze glossary](https://www.astrolog.org/labyrnth/glossary.htm)
+
+
+- **Amit Patel**:
+ - - (Website) [A* notes](https://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html)
+ - - (Website) [A* notes (updated version)](https://www.redblobgames.com/pathfinding/a-star/introduction.html)
+
+<br>
+
+An interesting Master's Thesis about the subject can be found here: 
+- [Automated Maze Generation and Human Interaction (2008), by Martin Foltin](https://theses.cz/id/k1d3n5/)
+- or here [Automated Maze Generation and Human Interaction (2008), by Martin Foltin](https://is.muni.cz/th/xofma/thesis.pdf).
