@@ -38,12 +38,13 @@ class Distances:
 
     # Using the distances dictionary, calculate the shortest path
     # from the root to a specified goal cell.
-    # Return a dictionary (Distances object) with the path.
+    # Return a dictionary (Distances object) with the path and the list of cells (path_cells).
     def shortest_path_to(self, cell_goal):
 
         current_cell = cell_goal
-        backtrack = Distances(self.root) # get all the distances from the root
-        backtrack[current_cell] = self[current_cell]
+        backtrack_dist = Distances(self.root) # get all the distances from the root.
+        backtrack_dist[current_cell] = self[current_cell]
+        path_cells = [current_cell] # initialize the list path.
 
         # While the root cell is not visited.
         while current_cell != self.root:
@@ -52,22 +53,28 @@ class Distances:
             # meaning all the cells for which the current cell has a path to.
             for linked_cell in current_cell.all_linked():
 
+                # Handle the case: linked_cell is None.
+                linked_dist = self[linked_cell]
+                current_dist = self[current_cell]
+
                 # If a linked cell has a shorter distance than the current cell,
                 # the linked cell is the one from which the path came.
-                if self[linked_cell] < self[current_cell]:
+                if linked_dist is not None and linked_dist < current_dist:
 
                     # The linked cell is now the new current cell,
                     # exit this iteration and continue with the new current cell.
-                    backtrack[linked_cell] = self[linked_cell]
+                    backtrack_dist[linked_cell] = linked_dist
                     current_cell = linked_cell
+                    path_cells.append(current_cell) # update the path.
                     break
 
-        return backtrack
+        # Return the distances object and the path.
+        return backtrack_dist, path_cells
     # ----------------------------------------------- #
 
 
     # Calculate the cell with the farthest distance from the root.
-    # Return a couple (cell,distance).
+    # Return a tuple (cell, distance, path_cells).
     def longest_path_from(self):
 
         max_distance = 0
@@ -80,5 +87,13 @@ class Distances:
                 max_cell = cell
                 max_distance = dist
 
-        return max_cell, max_distance
+        # Get the path from root to farthest cell.
+        # shortest_path_to returns (distances, path).
+        _, path_cells = self.shortest_path_to(max_cell)
+
+        # The path is from farthest cell to root, so reverse it.
+        path_cells.reverse()
+
+        # Return the farthest cell, the farthest distance and the longest path.
+        return max_cell, max_distance, path_cells
     # ----------------------------------------------- #

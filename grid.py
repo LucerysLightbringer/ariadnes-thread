@@ -74,7 +74,7 @@ class Grid:
 
         # Find the most distant cell with the function longest_path_from().
         if distances_obj:
-            farthest_cell, self._max_distance = distances_obj.longest_path_from()
+            farthest_cell, self._max_distance, _ = distances_obj.longest_path_from()
         else:
             self._max_distance = 0
     # ----------------------------------------------- #
@@ -146,14 +146,21 @@ class Grid:
     # Internal method to color the cells based on the distances.
     # Return a map: map[cell] = (r,g,b).
     def _color_by_distances(self, distances_obj,
-                                  color_start,
-                                  color_middle,
-                                  color_end,
-                                  smooth_exp,
-                                  cell_subset):
+                            color_start,
+                            color_middle,
+                            color_end,
+                            smooth_exp,
+                            cell_subset=None):
 
         # Get max distance.
-        _, max_dist = distances_obj.longest_path_from()
+        try:
+            _, max_dist, _ = distances_obj.longest_path_from()
+        except ValueError:
+            try:
+                _, max_dist = distances_obj.longest_path_from()
+            except ValueError:
+                max_dist = 0
+
 
         if max_dist == 0:
             return {} # return empty map.
@@ -201,28 +208,31 @@ class Grid:
     # all possible options.
     # Return a map: map[cell] = (r,g,b).
     def _color_map(self,
-                   show_distances_gradient, distances_obj,
-                   show_subset_gradient, subset_cells,
+                   distances_obj,
+                   gradient_scope, path_cells,
                    show_deadends, deadend_color,
                    color_start, color_middle, color_end, smooth_exp):
 
         global_color_map = {}
 
-        # Color all the cells based on distances if specified.
-        if show_distances_gradient and distances_obj:
-            gradient_map = self._color_by_distances(
-                distances_obj,
-                color_start, color_middle, color_end, smooth_exp,
-                cell_subset=None)
-            global_color_map.update(gradient_map)
+        if distances_obj:
+            if gradient_scope == "full":
+                # Color all the cells based on distances.
+                gradient_map = self._color_by_distances(
+                    distances_obj,
+                    color_start, color_middle, color_end, smooth_exp,
+                    cell_subset=None)
+                global_color_map.update(gradient_map)
 
-        # Color only a subset of cells.
-        if show_subset_gradient and subset_cells:
-            gradient_map = self._color_by_distances(
-                distances_obj,
-                color_start, color_middle, color_end, smooth_exp,
-                subset_cells)
-            global_color_map.update(gradient_map)
+            elif gradient_scope == "path" and path_cells:
+                # Color only a subset of cells (the path).
+                distances_for_path_gradient, _ = distances_obj.shortest_path_to(path_cells[-1])
+
+                gradient_map = self._color_by_distances(
+                    distances_for_path_gradient,
+                    color_start, color_middle, color_end, smooth_exp,
+                    path_cells)
+                global_color_map.update(gradient_map)
 
         # Color the deadends if specified.
         if show_deadends:
@@ -237,46 +247,43 @@ class Grid:
 
     # Internal method for drawing the solution path.
     def _draw_solution_details(self,
-                            draw,
-                            cell_size,
-                            show_solution, solution_path,
-                            path_color, text_color,
-                            start_cell, start_cell_color,
-                            end_cell, end_cell_color):
+                               draw,
+                               cell_size,
+                               path_cells, path_color, text_color,
+                               start_cell_color, end_cell_color,
+                               draw_solid_line=True,
+                               show_start_end_cells=True):
 
-        # Draw the solution path (only if requested).
-        if show_solution and solution_path:
+        # Draw the path (only if requested).
+        if path_cells:
 
-            # Define the default starting cell (the root of the solution),
-            # and ending cell (the goal cell of the solution).
-            if start_cell is None:
-                start_cell = solution_path[0]
+            start_cell = path_cells[0]
+            end_cell = path_cells[-1]
 
-            if end_cell is None:
-                end_cell = solution_path[-1]
+            # Draw the path lines (only if requested).
+            if draw_solid_line:
+                for i in range(len(path_cells) - 1):
 
-            # Draw the solution path.
-            for i in range(len(solution_path) - 1):
+                    cell1 = path_cells[i]
+                    cell2 = path_cells[i + 1]
 
-                cell1 = solution_path[i]
-                cell2 = solution_path[i + 1]
+                    cx1 = cell1.column * cell_size + cell_size // 2
+                    cy1 = cell1.row * cell_size + cell_size // 2
+                    cx2 = cell2.column * cell_size + cell_size // 2
+                    cy2 = cell2.row * cell_size + cell_size // 2
 
-                cx1 = cell1.column * cell_size + cell_size // 2
-                cy1 = cell1.row * cell_size + cell_size // 2
-                cx2 = cell2.column * cell_size + cell_size // 2
-                cy2 = cell2.row * cell_size + cell_size // 2
-
-                draw.line((cx1, cy1, cx2, cy2), fill=path_color, width=max(1, cell_size // 10))
+                    draw.line((cx1, cy1, cx2, cy2), fill=path_color, width=max(1, cell_size // 10))
 
 
             # Load the font for the text (S for the root cell, E for the goal cell).
             try:
-                current_font = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=15)
+                current_font = ImageFont.truetype("arial.ttf", size=15)
             except IOError:
                 current_font = ImageFont.load_default()
 
 
-            if start_cell:
+            # Only if requested.
+            if start_cell and show_start_end_cells:
                 sx1 = start_cell.column * cell_size
                 sy1 = start_cell.row * cell_size
                 sx2 = (start_cell.column + 1) * cell_size
@@ -286,7 +293,7 @@ class Grid:
                 text_y = start_cell.row * cell_size + cell_size // 3
                 draw.text((text_x, text_y), "S", fill=text_color, font=current_font)
 
-            if end_cell:
+            if end_cell and show_start_end_cells:
                 ex1 = end_cell.column * cell_size
                 ey1 = end_cell.row * cell_size
                 ex2 = (end_cell.column + 1) * cell_size
@@ -395,11 +402,12 @@ class Grid:
                end_cell_color=(0,255,255),    # cyan
                deadend_color=(255,0,0),       # red
 
-               show_distances_gradient=False, distances_obj=None, show_distance_text=False,
-               show_subset_gradient=False, subset_cells=None,
-               show_solution=False, solution_path=None,
-               show_deadends=False,
-               start_cell=None, end_cell=None):
+               distances_obj=None, show_distance_text=False,
+               gradient_scope="none", # "none", "full", "path"
+               path_cells=[], # list of cells for the path
+               draw_solid_path_line=False,
+               show_path_start_end_cells=False,
+               show_deadends=False):
 
 
         # Create the default PNG image.
@@ -410,8 +418,8 @@ class Grid:
 
         # Get the color of every cell of the maze.
         global_color_map = self._color_map(
-            show_distances_gradient=show_distances_gradient, distances_obj=distances_obj,
-            show_subset_gradient=show_subset_gradient, subset_cells=subset_cells,
+            distances_obj=distances_obj,
+            gradient_scope=gradient_scope, path_cells=path_cells,
             show_deadends=show_deadends,
             deadend_color=deadend_color,
             color_start=gradient_start, color_middle=gradient_middle, color_end=gradient_end, smooth_exp=smooth_exp)
@@ -423,8 +431,8 @@ class Grid:
         # Load fonts only if requested (only if the distances must be written on every cell).
         if show_distance_text and distances_obj:
             try:
-                font_normal = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=9)
-                font_small = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", size=8)
+                font_normal = ImageFont.truetype("arial.ttf", size=9)
+                font_small = ImageFont.truetype("arial.ttf", size=8)
                 current_font = font_normal
             except IOError:
                 current_font = ImageFont.load_default()
@@ -468,13 +476,15 @@ class Grid:
                               thick_wall_width, thick_wall_color)
 
 
-        # Draw the solution path and the start and ending cells.
+        # Draw the path and the start and ending cells.
         self._draw_solution_details(draw,
                                     cell_size,
-                                    show_solution, solution_path,
+                                    path_cells,
                                     path_color, text_color,
-                                    start_cell, start_cell_color,
-                                    end_cell, end_cell_color)
+                                    start_cell_color,
+                                    end_cell_color,
+                                    draw_solid_path_line,
+                                    show_path_start_end_cells)
 
         return img
     # ----------------------------------------------- #
