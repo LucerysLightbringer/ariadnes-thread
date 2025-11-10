@@ -107,19 +107,20 @@ Here is a list of all the configurable options:
 # Maze samples
 
 ## Binary Tree
-![Binary Tree image](images/binary_tree/distances_gradient.png)
+<img src="images/binary_tree/distances_gradient.png" alt="Binary Tree image" width="300"/>
 
 ## Sidewinder
-![Sidewinder image](images/sidewinder/distances_gradient.png)
+<img src="images/sidewinder/distances_gradient.png" alt="Sidewinder image" width="300"/>
 
 ## Aldous-Broder
-![Aldous-Broder image](images/aldous_broder/distances_gradient.png)
+<img src="images/aldous_broder/distances_gradient.png" alt="Aldous-Broder image" width="300"/>
 
 ## Recursive Backtracker
-![Recursive Backtracker image](images/recursive_backtracker/distances_gradient.png)
+<img src="images/recursive_backtracker/distances_gradient.png" alt="Recursive Backtracker image" width="300"/>
 
 ## Recursive Division
-![Recursive Division image](images/recursive_division/distances_gradient.png)
+<img src="images/recursive_division/distances_gradient.png" alt="Recursive Division image" width="300"/>
+
 
 
 # Stats
@@ -128,78 +129,78 @@ Here are some statistics collected about the mazes.
 
 ## Generation time
 
-### 100x100 
-![Generation time 100x100 image](images/stats/exec_time_100.png)
+### 100x100
+<img src="images/stats/generative_time_100.png" alt="Generation time 100x100 image" width="400"/>
 
 ### 200x200
-![Generation time 200x200 image](images/stats/exec_time_200.png)
+<img src="images/stats/generative_time_200.png" alt="Generation time 200x200 image" width="400"/>
 
 ### 500x500
-![Generation time 500x500 image](images/stats/exec_time_500.png)
+<img src="images/stats/generative_time_500.png" alt="Generation time 500x500 image" width="400"/>
 
 ### Comparative
-![Generation time total image](images/stats/exec_time_total.png)
+<img src="images/stats/generative_time_total.png" alt="Generation time comparative image" width="450"/>
 
 <br>
 
 ## Resolution time
 
 ### 100x100
-![Resolution time 100x100 image](images/stats/exec_time_astar_100.png)
+<img src="images/stats/solution_time_100.png" alt="Resolution time 100x100 image" width="400"/>
 
 ### 200x200
-![Resolution time 200x200 image](images/stats/exec_time_astar_200.png)
+<img src="images/stats/solution_time_200.png" alt="Resolution time 200x200 image" width="400"/>
 
 ### 500x500
-![Resolution time 500x500 image](images/stats/exec_time_astar_500.png)
+<img src="images/stats/solution_time_500.png" alt="Resolution time 500x500 image" width="400"/>
 
 ### Comparative
-![Resolution time total image](images/stats/exec_time_astar_total.png)
+<img src="images/stats/solution_time_total.png" alt="Resolution time comparative image" width="450"/>
 
 <br>
 
 ## Length of the solution
 
 ### 100x100
-![Solution length 100x100 image](images/stats/solution_length_100.png)
+<img src="images/stats/solution_length_100.png" alt="Solution length 100x100 image" width="400"/>
 
 ### 200x200
-![Solution length 200x200 image](images/stats/solution_length_200.png)
+<img src="images/stats/solution_length_200.png" alt="Solution length 200x200 image" width="400"/>
 
 ### 500x500
-![Solution length 500x500 image](images/stats/solution_length_500.png)
+<img src="images/stats/solution_length_500.png" alt="Solution length 500x500 image" width="400"/>
 
 ### Comparative
-![Solution length total image](images/stats/solution_length_total.png)
+<img src="images/stats/solution_length_total.png" alt="Solution length comparative image" width="450"/>
 
 <br>
 
 ## Length of the longest path
 
 ### 100x100
-![Longest path length 100x100 image](images/stats/longest_path_100.png)
+<img src="images/stats/longest_path_100.png" alt="Longest path length 100x100 image" width="400"/>
 
 ### 200x200
-![Longest path length 200x200 image](images/stats/longest_path_200.png)
+<img src="images/stats/longest_path_200.png" alt="Longest path length 200x200 image" width="400"/>
 
 ### 500x500
-![Longest path length 500x500 image](images/stats/longest_path_500.png)
+<img src="images/stats/longest_path_500.png" alt="Longest path length 500x500 image" width="400"/>
 
 ### Comparative
-![Longest path length total image](images/stats/longest_path_total.png)
+<img src="images/stats/longest_path_total.png" alt="Longest path length comparative image" width="450"/>
 
 <br>
 
 ## Number of dead ends
 
 ### 100x100
-![Dead ends count 100x100 image](images/stats/deadends_100.png)
+<img src="images/stats/deadend_100.png" alt="Dead end cells percentage 100x100 image" width="350"/>
 
 ### 200x200
-![Dead ends count 200x200 image](images/stats/deadends_200.png)
+<img src="images/stats/deadend_200.png" alt="Dead end cells percentage 200x200 image" width="350"/>
 
 ### 500x500
-![Dead ends count 500x500 image](images/stats/deadends_500.png)
+<img src="images/stats/deadend_500.png" alt="Dead end cells percentage 500x500 image" width="350"/>
 
 ### Comparative
-![Dead ends count total image](images/stats/deadends_total.png)
+<img src="images/stats/deadend_500.png" alt="Dead end cells percentage comparative image" width="400"/>
