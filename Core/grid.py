@@ -1,7 +1,7 @@
 from random import randrange
 from PIL import Image, ImageDraw, ImageFont  # Pillow library for image manipulation functions.
-from cell import Cell
-from distances import Distances
+from Core.cell import Cell
+from Core.distances import Distances
 
 
 # Define a maze as a (rows x columns) grid.

@@ -1,4 +1,4 @@
-from distances import Distances # for the function calc_all_distances()
+from Core.distances import Distances # for the function calc_all_distances()
 
 # Define a cell of the grid as a 2D point (row,column).
 # Define for every cell its neighbors (north,south,east,west).

@@ -1,13 +1,12 @@
 import time
 
-from grid import Grid
-from distances import Distances
-from astar import AStar
-from binary_tree import BinaryTree
-from sidewinder import Sidewinder
-from aldous_broder import AldousBroder
-from recursive_backtracker import RecursiveBacktracker
-from recursive_division import RecursiveDivision
+from Core import Grid
+from SolverAlgos import AStar
+from GeneratorAlgos import BinaryTree
+from GeneratorAlgos import Sidewinder
+from GeneratorAlgos import AldousBroder
+from GeneratorAlgos import RecursiveBacktracker
+from GeneratorAlgos import RecursiveDivision
 
 
 def main():

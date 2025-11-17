@@ -1,13 +1,13 @@
 import sys
 import time
 
-from astar import AStar
-from grid import Grid
-from binary_tree import BinaryTree
-from recursive_division import RecursiveDivision
-from sidewinder import Sidewinder
-from aldous_broder import AldousBroder
-from recursive_backtracker import RecursiveBacktracker
+from SolverAlgos.astar import AStar
+from Core.grid import Grid
+from GeneratorAlgos.binary_tree import BinaryTree
+from GeneratorAlgos.recursive_division import RecursiveDivision
+from GeneratorAlgos.sidewinder import Sidewinder
+from GeneratorAlgos.aldous_broder import AldousBroder
+from GeneratorAlgos.recursive_backtracker import RecursiveBacktracker
 
 
 # Calculate the execution time of the generative algorithms.
