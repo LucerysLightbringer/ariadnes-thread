@@ -129,7 +129,7 @@ class GenerationFrame(ttk.LabelFrame):
         ttk.Button(
             self,
             text="Reset options",
-            command=self.controller._reset_dimensions,
+            command=self.controller._reset_generation_options,
             style="Accent.TButton"
         ).pack(fill=tk.X, pady=(5, 10))
 

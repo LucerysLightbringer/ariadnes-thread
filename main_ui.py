@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, colorchooser
-from PIL import Image, ImageTk, ImageDraw
+
+from PIL import Image, ImageTk
 
 from Core.grid import Grid
 from SolverAlgos.astar import AStar
@@ -93,7 +94,7 @@ class MazeApp:
         self.show_gradient = tk.BooleanVar(value=False)
 
         self.show_solution_start_end = tk.BooleanVar(value=False)
-        self.solution_path_render_mode = tk.StringVar(value="Solid") # solid, gradient
+        self.solution_path_render_mode = tk.StringVar(value="solid") # solid, gradient
         self.show_longest_path_start_end = tk.BooleanVar(value=False)
         self.longest_path_render_mode = tk.StringVar(value="solid") # solid, gradient
 
@@ -115,15 +116,18 @@ class MazeApp:
 
 
         # Tracing of variables.
-        self.start_cell_r.trace_add('write', self._update_solution_path_cells)
-        self.start_cell_c.trace_add('write', self._update_solution_path_cells)
-        self.end_cell_r.trace_add('write', self._update_solution_path_cells)
-        self.end_cell_c.trace_add('write', self._update_solution_path_cells)
-        self.distance_start_r.trace_add('write', lambda *args: self._update_distances_source_cell())
-        self.distance_start_c.trace_add('write', lambda *args: self._update_distances_source_cell())
-        self.thin_wall_width.trace_add('write', lambda *args: self._redraw_maze())
-        self.thick_wall_width.trace_add('write', lambda *args: self._redraw_maze())
-        self.smooth_exp.trace_add('write', lambda *args: self._update_smooth_label())
+        self.cell_size.trace_add("write", lambda *args: self._redraw_maze())
+        self.thin_wall_width.trace_add("write", lambda *args: self._redraw_maze())
+        self.thick_wall_width.trace_add("write", lambda *args: self._redraw_maze())
+
+        self.start_cell_r.trace_add("write", self._update_solution_path_cells)
+        self.start_cell_c.trace_add("write", self._update_solution_path_cells)
+        self.end_cell_r.trace_add("write", self._update_solution_path_cells)
+        self.end_cell_c.trace_add("write", self._update_solution_path_cells)
+        self.distance_start_r.trace_add("write", lambda *args: self._update_distances_source_cell())
+        self.distance_start_c.trace_add("write", lambda *args: self._update_distances_source_cell())
+
+        self.smooth_exp.trace_add("write", lambda *args: self._update_smooth_label())
 
 
         # Maps.
@@ -162,16 +166,16 @@ class MazeApp:
         # Initialize widgets.
         # Left panel.
         GenerationFrame(self.frame_control, self).pack(fill=tk.X, pady=(0, 5))
-        ttk.Separator(self.frame_control, orient='horizontal').pack(fill='x', pady=5)
+        ttk.Separator(self.frame_control, orient="horizontal").pack(fill=tk.X, pady=5)
         DetailsFrame(self.frame_control, self).pack(fill=tk.X, pady=5)
 
         # Right panel.
         ColorPickerFrame(self.frame_colors, self).pack(fill=tk.X, pady=(0, 5))
-        ttk.Separator(self.frame_colors, orient='horizontal').pack(fill='x', pady=5)
+        ttk.Separator(self.frame_colors, orient="horizontal").pack(fill=tk.X, pady=5)
         OptionsFrame(self.frame_colors, self).pack(fill=tk.X, pady=5)
-        ttk.Separator(self.frame_colors, orient='horizontal').pack(fill='x', pady=5)
+        ttk.Separator(self.frame_colors, orient="horizontal").pack(fill=tk.X, pady=5)
         DisplayFrame(self.frame_colors, self).pack(fill=tk.X, pady=5)
-        ttk.Separator(self.frame_colors, orient='horizontal').pack(fill='x', pady=5)
+        ttk.Separator(self.frame_colors, orient="horizontal").pack(fill=tk.X, pady=5)
         SaveMazeFrame(self.frame_colors, self).pack(fill=tk.X, pady=5)
 
 
@@ -212,17 +216,18 @@ class MazeApp:
 
 
     def _update_color_preview(self, target, hex_color):
-        self.color_previews[target].config(bg=hex_color)
+        if target in self.color_previews:
+            self.color_previews[target].config(bg=hex_color)
     # ----------------------------------------------- #
 
 
     def _choose_color(self, target):
-        current_color_str = getattr(self, target, self.DEFAULT_COLORS["background_color"])
+
+        current_color_str = getattr(self, target)
 
         _, hex_color = colorchooser.askcolor(
             title=f"Choose color for {target.replace('_', ' ').title()}",
-            initialcolor=current_color_str
-        )
+            initialcolor=current_color_str)
 
         if hex_color:
             setattr(self, target, hex_color)
@@ -234,7 +239,6 @@ class MazeApp:
     def _load_default_colors(self):
 
         color_targets = list(self.DEFAULT_COLORS.keys())
-        color_targets.append('background_color')
 
         for target in color_targets:
             hex_color = self.DEFAULT_COLORS.get(target)
@@ -382,7 +386,7 @@ class MazeApp:
                     return default_value
 
             def hex_to_rgb(hex_color):
-                hex_color = hex_color.lstrip('#')
+                hex_color = hex_color.lstrip("#")
                 if len(hex_color) != 6:
                     return (0, 0, 0) # fallback
                 return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
@@ -531,16 +535,18 @@ class MazeApp:
             return
 
         try:
-            w = int(self.current_image.width * self.zoom_level)
-            h = int(self.current_image.height * self.zoom_level)
+            self.original_image = image
+
+            w = int(self.original_image.width * self.zoom_level)
+            h = int(self.original_image.height * self.zoom_level)
 
             if self.zoom_level != 1.0:
-                resized_image = self.current_image.resize((w, h), Image.Resampling.NEAREST)
+                resized_image = self.original_image.resize((w, h), Image.Resampling.NEAREST)
             else:
-                resized_image = self.current_image
+                resized_image = self.original_image
 
-            self.current_image = image
-            self.tk_image = ImageTk.PhotoImage(resized_image)
+            self.current_image = resized_image
+            self.tk_image = ImageTk.PhotoImage(self.current_image)
 
             self.canvas.config(scrollregion=(0, 0, w, h))
             self.canvas.delete("all")
@@ -598,13 +604,29 @@ class MazeApp:
     # ----------------------------------------------- #
 
 
-    def _reset_dimensions(self):
+    def _reset_generation_options(self):
 
         self.rows.set(self.DEFAULT_ROWS)
         self.columns.set(self.DEFAULT_COLUMNS)
         self.cell_size.set(self.DEFAULT_CELL_SIZE)
         self.thin_wall_width.set(self.DEFAULT_THIN_WALL)
         self.thick_wall_width.set(self.DEFAULT_THICK_WALL)
+
+        self.background_type.set("full_color")
+        colors_to_reset = [
+            "thin_wall_color",
+            "thick_wall_color",
+            "background_color",
+            "checkerboard_color_1",
+            "checkerboard_color_2"
+        ]
+
+        for target in colors_to_reset:
+            default_hex = self.DEFAULT_COLORS.get(target)
+            if default_hex:
+                setattr(self, target, default_hex)
+                self._update_color_preview(target, default_hex)
+
 
         self._redraw_maze()
     # ----------------------------------------------- #
