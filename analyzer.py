@@ -344,9 +344,9 @@ def full_analysis(rows=100, columns=100, tries=100, algorithms=None, show_every_
             root = testgrid[0,0]
             distances = root.calc_all_distances()
 
-            new_root, _ = distances.longest_path_from()
+            new_root, _, _= distances.longest_path_from()
             new_distances = new_root.calc_all_distances()
-            _, longest_path = new_distances.longest_path_from()
+            _, longest_path, _ = new_distances.longest_path_from()
 
             metrics[algo.__name__]["longest_path_length"].append(longest_path)
 
@@ -402,7 +402,6 @@ if __name__ == "__main__":
 
     algos = [BinaryTree, Sidewinder, AldousBroder, RecursiveBacktracker, RecursiveDivision]
     full_analysis(rows, columns, tries, algos, show_every_try=True)
-
 
     #gen = [BinaryTree, Sidewinder, AldousBroder, RecursiveBacktracker, RecursiveDivision]
     #execution_time_generation(rows, columns, tries, gen, show_every_try=True)
